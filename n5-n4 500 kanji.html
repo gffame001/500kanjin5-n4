@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>কাঞ্জি কুইজ — N5–N4 (৫০০)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:#eef1f6;
+    color:#1f2937;
+    font-family:'Noto Sans Bengali','Hind Siliguri','Segoe UI',system-ui,-apple-system,sans-serif;
+    display:flex;
+    justify-content:center;
+    padding:28px 16px 64px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .card{
+    width:100%;
+    max-width:760px;
+    background:#fff;
+    border:1px solid #e4e8ef;
+    border-radius:20px;
+    padding:22px 22px 20px;
+    box-shadow:0 12px 32px rgba(21,34,66,.07), 0 2px 6px rgba(21,34,66,.04);
+  }
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;flex-wrap:wrap;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#fff3e0;color:#b45309;border:1px solid #ffd9a8;
+    border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600;
+    white-space:nowrap;
+  }
+  .badge-ico{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:19px;height:19px;border-radius:5px;
+    background:#f59e0b;color:#fff;font-size:11px;font-weight:700;
+    font-family:'Noto Sans JP',sans-serif;
+  }
+  .progress{font-size:13px;font-weight:600;color:#6b7280;letter-spacing:.02em}
+
+  /* Segmented Progress Bar (500 thin segments) */
+  .progress-wrap{margin-top:14px}
+  .segments{
+    display:flex;
+    gap:1px;
+    height:9px;
+    align-items:stretch;
+  }
+  .seg{
+    flex:1 1 0;
+    min-width:0;
+    border-radius:1.5px;
+    background:#e6eaf1;
+    cursor:pointer;
+    transition:background .18s ease, box-shadow .15s ease;
+  }
+  .seg:hover{box-shadow:0 0 0 1.5px #6366f1;z-index:2}
+  .seg.now{
+    background:#c7d2fe;
+    box-shadow:0 0 0 1.5px #6366f1;
+    animation:segPulse 1.5s ease-in-out infinite;
+  }
+  .seg.correct{background:#22c55e;box-shadow:none;animation:none}
+  .seg.wrong{background:#ef4444;box-shadow:none;animation:none}
+  @keyframes segPulse{
+    0%,100%{opacity:1}
+    50%{opacity:.45}
+  }
+  .progress-meta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-top:9px;
+    font-size:12.5px;
+    color:#64748b;
+    flex-wrap:wrap;
+  }
+  .progress-meta .pm b{color:#111827;font-weight:700}
+  .progress-meta .pills{display:inline-flex;gap:6px}
+  .pill{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:2px 9px;border-radius:999px;
+    font-weight:700;font-size:12px;
+  }
+  .pill.ok{background:#e7f8ee;color:#15803d}
+  .pill.no{background:#fdeaea;color:#b91c1c}
+
+  .kanji{
+    font-family:'Noto Sans JP','Yu Gothic','Hiragino Sans',serif;
+    font-size:clamp(62px,16vw,104px);
+    font-weight:700;
+    line-height:1.05;
+    letter-spacing:.04em;
+    text-align:center;
+    color:#111827;
+    margin:26px 0 12px;
+  }
+  .question{
+    text-align:center;
+    color:#4b5563;
+    font-size:16px;
+    margin:0 0 20px;
+  }
+
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .opt{
+    position:relative;
+    font-family:inherit;
+    font-size:16px;
+    font-weight:600;
+    padding:14px 12px;
+    border-radius:12px;
+    border:1.6px solid;
+    background:#fff;
+    cursor:pointer;
+    text-align:center;
+    transition:transform .12s ease, box-shadow .12s ease, background .15s, border-color .15s;
+    line-height:1.35;
+  }
+  .opt:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 16px rgba(21,34,66,.09)}
+  .opt:active:not(:disabled){transform:translateY(0)}
+  .opt:disabled{cursor:default;transform:none;box-shadow:none}
+  .o0{background:#ecfaf1;border-color:#93d9b0;color:#186b41}
+  .o1{background:#fff9e8;border-color:#f2d582;color:#8a6410}
+  .o2{background:#fdeef0;border-color:#f2a9b2;color:#a13844}
+  .o3{background:#eef1ff;border-color:#aebbf3;color:#37479e}
+  .opt.correct{
+    background:#d8f6e4;border-color:#22a45d;color:#0f6b3a;
+    box-shadow:0 0 0 3px rgba(34,164,93,.16);
+  }
+  .opt.wrong{
+    background:#fde4e4;border-color:#e04a4a;color:#9b1c1c;
+  }
+  .opt.dim{opacity:.5}
+  .opt .mark{
+    position:absolute;
+    top:-9px;
+    right:-9px;
+    width:26px;height:26px;
+    border-radius:50%;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    font-weight:700;
+    color:#fff;
+    line-height:1;
+    box-shadow:0 3px 8px rgba(0,0,0,.18);
+    border:2px solid #fff;
+    animation:pop .25s cubic-bezier(.2,1.4,.5,1);
+  }
+  .opt.correct .mark{display:flex;background:#16a34a}
+  .opt.wrong .mark{display:flex;background:#dc2626}
+  @keyframes pop{
+    0%{transform:scale(0);opacity:0}
+    100%{transform:scale(1);opacity:1}
+  }
+
+  .reveal{position:relative;margin-top:22px}
+  .reveal.locked .detail,
+  .reveal.locked .example{filter:blur(6px);pointer-events:none;user-select:none}
+  .lock-chip{display:none}
+  .reveal.locked .lock-chip{
+    display:flex;position:absolute;inset:0;z-index:2;
+    align-items:center;justify-content:center;
+    font-size:13.5px;font-weight:600;color:#64748b;
+  }
+  .reveal.locked .lock-chip span{
+    background:rgba(255,255,255,.86);
+    border:1px solid #e2e8f0;
+    padding:8px 16px;border-radius:999px;
+    box-shadow:0 4px 12px rgba(21,34,66,.06);
+  }
+  .detail{
+    border:1px solid #e8ecf2;
+    border-radius:14px;
+    background:#fcfdff;
+    padding:14px 16px;
+    display:flex;flex-direction:column;gap:10px;
+    transition:filter .25s ease;
+  }
+  .row{display:flex;align-items:center;gap:10px;font-size:15px;flex-wrap:wrap;line-height:1.5}
+  .row b{color:#111827;font-weight:700}
+  .row .val{color:#374151}
+  .ico{
+    flex:none;display:inline-flex;align-items:center;justify-content:center;
+    width:22px;height:22px;border-radius:6px;
+    background:#eef2f8;color:#475569;font-size:12px;font-weight:700;
+    font-family:'Noto Sans JP',sans-serif;
+  }
+  .ico.check{background:#e4f7ec;color:#1e9e5a;font-size:13px}
+  .spk{
+    flex:none;width:22px;height:22px;padding:0;border:none;border-radius:6px;
+    background:#eef2f8;color:#475569;font-size:11px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    transition:background .15s;
+  }
+  .spk:hover{background:#dde5f0}
+  .example{
+    margin-top:12px;
+    background:#f7f8fa;
+    border:1px solid #eceff4;
+    border-radius:12px;
+    padding:14px 16px;
+    transition:filter .25s ease;
+  }
+  .example .jp{
+    font-family:'Noto Sans JP',sans-serif;
+    font-size:17px;color:#111827;margin-bottom:7px;line-height:1.6;
+  }
+  .example .roma{font-style:italic;color:#6b7280;font-size:13.5px;margin-bottom:6px}
+  .example .bn{color:#374151;font-size:15px}
+
+  .nav-row{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    align-items:stretch;
+  }
+  .nav-arrow{
+    flex:0 0 58px;
+    border-radius:14px;
+    border:1.6px solid #e2e8f0;
+    background:#f8fafc;
+    color:#475569;
+    font-size:20px;
+    font-weight:700;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:inherit;
+    line-height:1;
+    transition:background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .nav-arrow:hover:not(:disabled){
+    background:#eef2ff;
+    border-color:#c7d2fe;
+    color:#4f46e5;
+    transform:translateY(-1px);
+    box-shadow:0 6px 14px -6px rgba(99,102,241,.5);
+  }
+  .nav-arrow:active:not(:disabled){transform:translateY(0)}
+  .nav-arrow:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+    background:#f1f5f9;
+  }
+  .nav-row .next{margin-top:0;flex:1}
+
+  .next{
+    position:relative;
+    overflow:hidden;
+    padding:16px 20px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#6366f1 0%, #8b5cf6 52%, #a855f7 100%);
+    color:#fff;
+    font-family:inherit;
+    font-size:16px;
+    font-weight:700;
+    letter-spacing:.015em;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    box-shadow:
+      0 8px 20px -6px rgba(99,102,241,.55),
+      0 4px 10px -4px rgba(139,92,246,.40),
+      inset 0 1px 0 rgba(255,255,255,.25);
+    transition:transform .18s cubic-bezier(.2,.8,.3,1), box-shadow .18s ease, filter .18s ease;
+  }
+  .next::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.30) 50%, transparent 70%);
+    transform:translateX(-120%);
+    transition:transform .55s ease;
+    pointer-events:none;
+  }
+  .next:hover:not(:disabled)::before{transform:translateX(120%)}
+  .next:hover:not(:disabled){
+    transform:translateY(-2px);
+    box-shadow:
+      0 14px 28px -8px rgba(99,102,241,.60),
+      0 6px 14px -4px rgba(139,92,246,.45),
+      inset 0 1px 0 rgba(255,255,255,.30);
+  }
+  .next:active:not(:disabled){transform:translateY(0);filter:brightness(.96)}
+  .next:disabled{
+    background:linear-gradient(135deg,#cbd5e1,#cbd5e1);
+    color:#f8fafc;
+    box-shadow:none;
+    cursor:not-allowed;
+    opacity:.85;
+  }
+  .next:disabled::before{display:none}
+  .next .arrow{
+    display:inline-block;
+    font-size:18px;
+    line-height:1;
+    transition:transform .2s ease;
+  }
+  .next:hover:not(:disabled) .arrow{transform:translateX(4px)}
+  .next:disabled .arrow{opacity:.6}
+  .next .chip{
+    background:rgba(255,255,255,.22);
+    border:1px solid rgba(255,255,255,.30);
+    padding:1px 9px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+  }
+  .next:disabled .chip{background:rgba(255,255,255,.35);border-color:transparent;color:#64748b}
+
+  .result{text-align:center;padding:34px 10px 20px}
+  .result .emoji{font-size:52px;line-height:1}
+  .result h2{margin:14px 0 8px;font-size:24px;color:#111827}
+  .result .score{color:#4b5563;font-size:17px;margin:0 0 26px}
+  .result .score b{color:#0f6b3a;font-size:22px}
+  .result .next{margin-top:0;width:100%}
+
+  @media (max-width:520px){
+    .options{grid-template-columns:1fr}
+    .card{padding:18px 16px 16px;border-radius:16px}
+    body{padding:16px 12px 48px}
+    .segments{gap:1px;height:8px}
+    .progress-meta{font-size:12px}
+    .nav-arrow{flex-basis:48px;font-size:17px;border-radius:12px}
+  }
+</style>
+</head>
+<body>
+
+<main class="card" id="card"></main>
+
+<script>
+/* =========================================================
+   500 Kanji — N5 to N4 (from user JSON)
+   ========================================================= */
+const DATA = [
+{"id":1,"kanji":"日","options":["সূর্য","চাঁদ","তারা","আকাশ"],"correctOption":"সূর্য","reading":"ひ (Kun)","onyomi":"ニチ・ジツ (nichi/jitsu)","kunyomi":"ひ・か (hi/ka)","meaning":"সূর্য","exampleJp":"日曜日に友だちに会います。","exampleRoma":"Nichiyoubi ni tomodachi ni aimasu.","exampleBn":"রবিবার বন্ধুর সাথে দেখা করি।"},
+{"id":2,"kanji":"月","options":["চাঁদ","সূর্য","তারা","আকাশ"],"correctOption":"চাঁদ","reading":"つき (Kun)","onyomi":"ゲツ・ガツ (getsu/gatsu)","kunyomi":"つき (tsuki)","meaning":"চাঁদ","exampleJp":"月曜日に学校へ行きます。","exampleRoma":"Getsuyoubi ni gakkou e ikimasu.","exampleBn":"সোমবার স্কুলে যাই।"},
+{"id":3,"kanji":"木","options":["গাছ","ফুল","পাতা","শিকড়"],"correctOption":"গাছ","reading":"き (Kun)","onyomi":"モク・ボク (moku/boku)","kunyomi":"き・こ (ki/ko)","meaning":"গাছ","exampleJp":"木曜日に公園へ行きます。","exampleRoma":"Mokuyoubi ni kouen e ikimasu.","exampleBn":"বৃহস্পতিবার পার্কে যাই।"},
+{"id":4,"kanji":"山","options":["পাহাড়","নদী","সমুদ্র","আকাশ"],"correctOption":"পাহাড়","reading":"やま (Kun)","onyomi":"サン (san)","kunyomi":"やま (yama)","meaning":"পাহাড়","exampleJp":"富士山は高いです。","exampleRoma":"Fujisan wa takai desu.","exampleBn":"ফুজি পর্বত উঁচু।"},
+{"id":5,"kanji":"川","options":["নদী","পাহাড়","সমুদ্র","হ্রদ"],"correctOption":"নদী","reading":"かわ (Kun)","onyomi":"セン (sen)","kunyomi":"かわ (kawa)","meaning":"নদী","exampleJp":"川で泳ぎます。","exampleRoma":"Kawa de oyogimasu.","exampleBn":"নদীতে সাঁতার কাটি।"},
+{"id":6,"kanji":"田","options":["ধানক্ষেত","সবজি ক্ষেত","বাগান","মাঠ"],"correctOption":"ধানক্ষেত","reading":"た (Kun)","onyomi":"デン (den)","kunyomi":"た (ta)","meaning":"ধানক্ষেত","exampleJp":"田で米を作ります。","exampleRoma":"Ta de kome o tsukurimasu.","exampleBn":"ধানক্ষেতে চাল উৎপাদন করি।"},
+{"id":7,"kanji":"人","options":["মানুষ","প্রাণী","পাখি","মাছ"],"correctOption":"মানুষ","reading":"ひと (Kun)","onyomi":"ジン・ニン (jin/nin)","kunyomi":"ひと (hito)","meaning":"মানুষ","exampleJp":"あの人は先生です。","exampleRoma":"Ano hito wa sensei desu.","exampleBn":"ওই ব্যক্তি শিক্ষক।"},
+{"id":8,"kanji":"口","options":["মুখ","চোখ","কান","নাক"],"correctOption":"মুখ","reading":"くち (Kun)","onyomi":"コウ (kou)","kunyomi":"くち (kuchi)","meaning":"মুখ","exampleJp":"口を開けてください。","exampleRoma":"Kuchi o akete kudasai.","exampleBn":"মুখ খুলুন।"},
+{"id":9,"kanji":"車","options":["গাড়ি","ট্রেন","বিমান","জাহাজ"],"correctOption":"গাড়ি","reading":"くるま (Kun)","onyomi":"シャ (sha)","kunyomi":"くるま (kuruma)","meaning":"গাড়ি","exampleJp":"車で会社へ行きます。","exampleRoma":"Kuruma de kaisha e ikimasu.","exampleBn":"গাড়িতে কোম্পানিতে যাই।"},
+{"id":10,"kanji":"門","options":["দরজা","জানালা","ছাদ","মেঝে"],"correctOption":"দরজা","reading":"もん (Kun)","onyomi":"モン (mon)","kunyomi":"かど (kado)","meaning":"দরজা","exampleJp":"門を閉めてください。","exampleRoma":"Mon o shimete kudasai.","exampleBn":"দরজা বন্ধ করুন।"},
+{"id":11,"kanji":"火","options":["আগুন","পানি","বাতাস","মাটি"],"correctOption":"আগুন","reading":"ひ (Kun)","onyomi":"カ (ka)","kunyomi":"ひ・ほ (hi/ho)","meaning":"আগুন","exampleJp":"火曜日に映画を見ます。","exampleRoma":"Kayoubi ni eiga o mimasu.","exampleBn":"মঙ্গলবার সিনেমা দেখি।"},
+{"id":12,"kanji":"水","options":["পানি","আগুন","বাতাস","মাটি"],"correctOption":"পানি","reading":"みず (Kun)","onyomi":"スイ (sui)","kunyomi":"みず (mizu)","meaning":"পানি","exampleJp":"水を飲みます。","exampleRoma":"Mizu o nomimasu.","exampleBn":"পানি খাই।"},
+{"id":13,"kanji":"金","options":["সোনা","রূপা","তামা","লোহা"],"correctOption":"সোনা","reading":"かね (Kun)","onyomi":"キン (kin)","kunyomi":"かね (kane)","meaning":"সোনা","exampleJp":"金曜日に買い物をします。","exampleRoma":"Kinyoubi ni kaimono o shimasu.","exampleBn":"শুক্রবার কেনাকাটা করি।"},
+{"id":14,"kanji":"土","options":["মাটি","পানি","আগুন","বাতাস"],"correctOption":"মাটি","reading":"つち (Kun)","onyomi":"ド (do)","kunyomi":"つち (tsuchi)","meaning":"মাটি","exampleJp":"土曜日に友だちに会います。","exampleRoma":"Doyoubi ni tomodachi ni aimasu.","exampleBn":"শনিবার বন্ধুর সাথে দেখা করি।"},
+{"id":15,"kanji":"子","options":["শিশু","বৃদ্ধ","যুবক","মহিলা"],"correctOption":"শিশু","reading":"こ (Kun)","onyomi":"シ (shi)","kunyomi":"こ (ko)","meaning":"শিশু","exampleJp":"子どもが公園で遊んでいます。","exampleRoma":"Kodomo ga kouen de asonde imasu.","exampleBn":"শিশুরা পার্কে খেলছে।"},
+{"id":16,"kanji":"女","options":["মহিলা","পুরুষ","শিশু","বৃদ্ধ"],"correctOption":"মহিলা","reading":"おんな (Kun)","onyomi":"ジョ (jo)","kunyomi":"おんな (onna)","meaning":"মহিলা","exampleJp":"女の人が歌っています。","exampleRoma":"Onna no hito ga utatte imasu.","exampleBn":"মহিলা গান গাইছেন।"},
+{"id":17,"kanji":"学","options":["পড়া","খেলা","ঘুম","খাওয়া"],"correctOption":"পড়া","reading":"まな(ぶ) (Kun)","onyomi":"ガク (gaku)","kunyomi":"まな(ぶ) (manabu)","meaning":"পড়া","exampleJp":"大学で日本語を学びます。","exampleRoma":"Daigaku de nihongo o manabimasu.","exampleBn":"বিশ্ববিদ্যালয়ে জাপানি ভাষা শিখি।"},
+{"id":18,"kanji":"生","options":["জীবন","মৃত্যু","ঘুম","বিশ্রাম"],"correctOption":"জীবন","reading":"い(きる) (Kun)","onyomi":"セイ (sei)","kunyomi":"い(きる)・う(まれる) (ikiru/umareru)","meaning":"জীবন","exampleJp":"先生は親切です。","exampleRoma":"Sensei wa shinsetsu desu.","exampleBn":"শিক্ষক দয়ালু।"},
+{"id":19,"kanji":"先","options":["আগে","পরে","এখন","সবসময়"],"correctOption":"আগে","reading":"さき (Kun)","onyomi":"セン (sen)","kunyomi":"さき (saki)","meaning":"আগে","exampleJp":"先週、京都へ行きました。","exampleRoma":"Senshuu, Kyouto e ikimashita.","exampleBn":"গত সপ্তাহে কিওটো গিয়েছিলাম।"},
+{"id":20,"kanji":"私","options":["আমি","তুমি","সে","আপনি"],"correctOption":"আমি","reading":"わたし (Kun)","onyomi":"シ (shi)","kunyomi":"わたし・わたくし (watashi/watakushi)","meaning":"আমি","exampleJp":"私は学生です。","exampleRoma":"Watashi wa gakusei desu.","exampleBn":"আমি ছাত্র।"},
+{"id":21,"kanji":"一","options":["এক","দুই","তিন","চার"],"correctOption":"এক","reading":"ひと(つ) (Kun)","onyomi":"イチ (ichi)","kunyomi":"ひと(つ) (hitotsu)","meaning":"এক","exampleJp":"一から十まで数えます。","exampleRoma":"Ichi kara juu made kazoemasu.","exampleBn":"এক থেকে দশ পর্যন্ত গণনা করি।"},
+{"id":22,"kanji":"二","options":["দুই","এক","তিন","চার"],"correctOption":"দুই","reading":"ふた(つ) (Kun)","onyomi":"ニ (ni)","kunyomi":"ふた(つ) (futatsu)","meaning":"দুই","exampleJp":"二時に会いましょう。","exampleRoma":"Niji ni aimashou.","exampleBn":"দুইটায় দেখা করি।"},
+{"id":23,"kanji":"三","options":["তিন","দুই","চার","পাঁচ"],"correctOption":"তিন","reading":"みっ(つ) (Kun)","onyomi":"サン (san)","kunyomi":"みっ(つ) (mittsu)","meaning":"তিন","exampleJp":"三時に出かけます。","exampleRoma":"Sanji ni dekakemasu.","exampleBn":"তিনটায় বের হই।"},
+{"id":24,"kanji":"四","options":["চার","তিন","পাঁচ","ছয়"],"correctOption":"চার","reading":"よっ(つ) (Kun)","onyomi":"シ (shi)","kunyomi":"よっ(つ)・よん (yottsu/yon)","meaning":"চার","exampleJp":"四月に日本へ行きます。","exampleRoma":"Shigatsu ni Nihon e ikimasu.","exampleBn":"এপ্রিলে জাপান যাই।"},
+{"id":25,"kanji":"五","options":["পাঁচ","চার","ছয়","সাত"],"correctOption":"পাঁচ","reading":"いつ(つ) (Kun)","onyomi":"ゴ (go)","kunyomi":"いつ(つ) (itsutsu)","meaning":"পাঁচ","exampleJp":"五月五日は子どもの日です。","exampleRoma":"Gogatsu itsuka wa kodomo no hi desu.","exampleBn":"৫ মে শিশু দিবস।"},
+{"id":26,"kanji":"六","options":["ছয়","পাঁচ","সাত","আট"],"correctOption":"ছয়","reading":"むっ(つ) (Kun)","onyomi":"ロク (roku)","kunyomi":"むっ(つ) (muttsu)","meaning":"ছয়","exampleJp":"六時に起きます。","exampleRoma":"Rokuji ni okimasu.","exampleBn":"ছয়টায় উঠি।"},
+{"id":27,"kanji":"七","options":["সাত","ছয়","আট","নয়"],"correctOption":"সাত","reading":"なな(つ) (Kun)","onyomi":"シチ (shichi)","kunyomi":"なな(つ) (nanatsu)","meaning":"সাত","exampleJp":"七月七日は七夕です。","exampleRoma":"Shichigatsu nanoka wa tanabata desu.","exampleBn":"৭ জুলাই তানাবাতা।"},
+{"id":28,"kanji":"八","options":["আট","সাত","নয়","দশ"],"correctOption":"আট","reading":"やっ(つ) (Kun)","onyomi":"ハチ (hachi)","kunyomi":"やっ(つ) (yattsu)","meaning":"আট","exampleJp":"八時に学校へ行きます。","exampleRoma":"Hachiji ni gakkou e ikimasu.","exampleBn":"আটটায় স্কুলে যাই।"},
+{"id":29,"kanji":"九","options":["নয়","আট","দশ","সাত"],"correctOption":"নয়","reading":"ここの(つ) (Kun)","onyomi":"キュウ・ク (kyuu/ku)","kunyomi":"ここの(つ) (kokonotsu)","meaning":"নয়","exampleJp":"九月に大学へ行きます。","exampleRoma":"Kugatsu ni daigaku e ikimasu.","exampleBn":"সেপ্টেম্বরে বিশ্ববিদ্যালয়ে যাই।"},
+{"id":30,"kanji":"十","options":["দশ","নয়","আট","এগারো"],"correctOption":"দশ","reading":"とお (Kun)","onyomi":"ジュウ (juu)","kunyomi":"とお (too)","meaning":"দশ","exampleJp":"十時に寝ます。","exampleRoma":"Juuji ni nemasu.","exampleBn":"দশটায় ঘুমাই।"},
+{"id":31,"kanji":"百","options":["একশ","দশ","এক হাজার","দশ হাজার"],"correctOption":"একশ","reading":"ヒャク (On)","onyomi":"ヒャク (hyaku)","kunyomi":"—","meaning":"একশ","exampleJp":"百円で買えます。","exampleRoma":"Hyakuen de kaemasu.","exampleBn":"একশ ইয়েনে কেনা যায়।"},
+{"id":32,"kanji":"千","options":["এক হাজার","একশ","দশ হাজার","দশ"],"correctOption":"এক হাজার","reading":"ち (Kun)","onyomi":"セン (sen)","kunyomi":"ち (chi)","meaning":"এক হাজার","exampleJp":"千円を払います。","exampleRoma":"Sen en o haraimasu.","exampleBn":"এক হাজার ইয়েন দিই।"},
+{"id":33,"kanji":"万","options":["দশ হাজার","এক হাজার","একশ","দশ"],"correctOption":"দশ হাজার","reading":"マン・バン (On)","onyomi":"マン・バン (man/ban)","kunyomi":"—","meaning":"দশ হাজার","exampleJp":"一万円を持っています。","exampleRoma":"Ichiman en o motte imasu.","exampleBn":"দশ হাজার ইয়েন আছে।"},
+{"id":34,"kanji":"円","options":["বৃত্ত","চতুর্ভুজ","ত্রিভুজ","আয়ত"],"correctOption":"বৃত্ত","reading":"まる(い) (Kun)","onyomi":"エン (en)","kunyomi":"まる(い) (marui)","meaning":"বৃত্ত","exampleJp":"百円玉をください。","exampleRoma":"Hyakuen dama o kudasai.","exampleBn":"একশ ইয়েনের কয়েন দিন।"},
+{"id":35,"kanji":"年","options":["বছর","মাস","দিন","সপ্তাহ"],"correctOption":"বছর","reading":"とし (Kun)","onyomi":"ネン (nen)","kunyomi":"とし (toshi)","meaning":"বছর","exampleJp":"今年は日本語を勉強します。","exampleRoma":"Kotoshi wa nihongo o benkyou shimasu.","exampleBn":"এ বছর জাপানি ভাষা পড়ি।"},
+{"id":36,"kanji":"上","options":["উপরে","নিচে","মাঝে","বাইরে"],"correctOption":"উপরে","reading":"うえ (Kun)","onyomi":"ジョウ (jou)","kunyomi":"うえ・あ(がる)・のぼ(る) (ue/agaru/noboru)","meaning":"উপরে","exampleJp":"机の上に本があります。","exampleRoma":"Tsukue no ue ni hon ga arimasu.","exampleBn":"টেবিলের উপরে বই আছে।"},
+{"id":37,"kanji":"下","options":["নিচে","উপরে","মাঝে","ভিতরে"],"correctOption":"নিচে","reading":"した (Kun)","onyomi":"カ・ゲ (ka/ge)","kunyomi":"した・さ(がる)・くだ(る) (shita/sagaru/kudaru)","meaning":"নিচে","exampleJp":"木の下で休みます。","exampleRoma":"Ki no shita de yasumimasu.","exampleBn":"গাছের নিচে বিশ্রাম নিই।"},
+{"id":38,"kanji":"中","options":["মাঝে","বাইরে","উপরে","নিচে"],"correctOption":"মাঝে","reading":"なか (Kun)","onyomi":"チュウ (chuu)","kunyomi":"なか (naka)","meaning":"মাঝে","exampleJp":"家の中にいます。","exampleRoma":"Ie no naka ni imasu.","exampleBn":"বাড়ির ভিতরে আছি।"},
+{"id":39,"kanji":"大","options":["বড়","ছোট","লম্বা","খাটো"],"correctOption":"বড়","reading":"おお(きい) (Kun)","onyomi":"ダイ・タイ (dai/tai)","kunyomi":"おお(きい) (ookii)","meaning":"বড়","exampleJp":"大きい犬がいます。","exampleRoma":"Ookii inu ga imasu.","exampleBn":"বড় কুকুর আছে।"},
+{"id":40,"kanji":"小","options":["ছোট","বড়","লম্বা","খাটো"],"correctOption":"ছোট","reading":"ちい(さい) (Kun)","onyomi":"ショウ (shou)","kunyomi":"ちい(さい)・こ・お (chiisai/ko/o)","meaning":"ছোট","exampleJp":"小さい鳥が飛んでいます。","exampleRoma":"Chiisai tori ga tonde imasu.","exampleBn":"ছোট পাখি উড়ছে।"},
+{"id":41,"kanji":"本","options":["বই","কলম","কাগজ","ব্যাগ"],"correctOption":"বই","reading":"もと (Kun)","onyomi":"ホン (hon)","kunyomi":"もと (moto)","meaning":"বই","exampleJp":"本を読みます。","exampleRoma":"Hon o yomimasu.","exampleBn":"বই পড়ি।"},
+{"id":42,"kanji":"半","options":["অর্ধেক","পুরো","দুই","তিন"],"correctOption":"অর্ধেক","reading":"なか(ば) (Kun)","onyomi":"ハン (han)","kunyomi":"なか(ば) (nakaba)","meaning":"অর্ধেক","exampleJp":"半分食べました。","exampleRoma":"Hanbun tabemashita.","exampleBn":"অর্ধেক খেয়েছি।"},
+{"id":43,"kanji":"分","options":["মিনিট","ঘণ্টা","সেকেন্ড","দিন"],"correctOption":"মিনিট","reading":"わ(ける) (Kun)","onyomi":"ブン・フン (bun/fun)","kunyomi":"わ(ける)・わ(かる) (wakeru/wakaru)","meaning":"মিনিট","exampleJp":"五分待ってください。","exampleRoma":"Gofun matte kudasai.","exampleBn":"পাঁচ মিনিট অপেক্ষা করুন।"},
+{"id":44,"kanji":"力","options":["শক্তি","দুর্বলতা","গতি","আকার"],"correctOption":"শক্তি","reading":"ちから (Kun)","onyomi":"リョク・リキ (ryoku/riki)","kunyomi":"ちから (chikara)","meaning":"শক্তি","exampleJp":"力があります。","exampleRoma":"Chikara ga arimasu.","exampleBn":"শক্তি আছে।"},
+{"id":45,"kanji":"何","options":["কী","কোথায়","কখন","কেন"],"correctOption":"কী","reading":"なに・なん (Kun)","onyomi":"カ (ka)","kunyomi":"なに・なん (nani/nan)","meaning":"কী","exampleJp":"これは何ですか。","exampleRoma":"Kore wa nan desu ka.","exampleBn":"এটা কী?"},
+{"id":46,"kanji":"明","options":["উজ্জ্বল","অন্ধকার","ঠান্ডা","গরম"],"correctOption":"উজ্জ্বল","reading":"あか(るい) (Kun)","onyomi":"メイ (mei)","kunyomi":"あか(るい)・あ(ける) (akarui/akeru)","meaning":"উজ্জ্বল","exampleJp":"明日は晴れます。","exampleRoma":"Ashita wa haremasu.","exampleBn":"আগামীকাল রোদ উঠবে।"},
+{"id":47,"kanji":"休","options":["বিশ্রাম","কাজ","খেলা","পড়া"],"correctOption":"বিশ্রাম","reading":"やす(む) (Kun)","onyomi":"キュウ (kyuu)","kunyomi":"やす(む) (yasumu)","meaning":"বিশ্রাম","exampleJp":"少し休みましょう。","exampleRoma":"Sukoshi yasumimashou.","exampleBn":"একটু বিশ্রাম নিই।"},
+{"id":48,"kanji":"体","options":["শরীর","মন","মাথা","হাত"],"correctOption":"শরীর","reading":"からだ (Kun)","onyomi":"タイ (tai)","kunyomi":"からだ (karada)","meaning":"শরীর","exampleJp":"体を大切にします。","exampleRoma":"Karada o taisetsu ni shimasu.","exampleBn":"শরীরের যত্ন নিই।"},
+{"id":49,"kanji":"好","options":["পছন্দ","অপছন্দ","ভালোবাসা","ঘৃণা"],"correctOption":"পছন্দ","reading":"す(き) (Kun)","onyomi":"コウ (kou)","kunyomi":"す(きな)・す(く) (sukina/suku)","meaning":"পছন্দ","exampleJp":"音楽が好きです。","exampleRoma":"Ongaku ga suki desu.","exampleBn":"গান পছন্দ করি।"},
+{"id":50,"kanji":"男","options":["পুরুষ","মহিলা","শিশু","বৃদ্ধ"],"correctOption":"পুরুষ","reading":"おとこ (Kun)","onyomi":"ダン・ナン (dan/nan)","kunyomi":"おとこ (otoko)","meaning":"পুরুষ","exampleJp":"男の人が歩いています。","exampleRoma":"Otoko no hito ga aruite imasu.","exampleBn":"পুরুষ হাঁটছেন।"},
+{"id":51,"kanji":"林","options":["বন","জঙ্গল","গাছ","পাহাড়"],"correctOption":"বন","reading":"はやし (Kun)","onyomi":"リン (rin)","kunyomi":"はやし (hayashi)","meaning":"বন","exampleJp":"林を散歩します。","exampleRoma":"Hayashi o sanpo shimasu.","exampleBn":"বনে হাঁটাহাঁটি করি।"},
+{"id":52,"kanji":"森","options":["জঙ্গল","বন","গাছ","পাহাড়"],"correctOption":"জঙ্গল","reading":"もり (Kun)","onyomi":"シン (shin)","kunyomi":"もり (mori)","meaning":"জঙ্গল","exampleJp":"森の中を歩きます。","exampleRoma":"Mori no naka o arukimasu.","exampleBn":"জঙ্গলের ভিতর হাঁটি।"},
+{"id":53,"kanji":"間","options":["মধ্যে","বাইরে","উপরে","নিচে"],"correctOption":"মধ্যে","reading":"あいだ (Kun)","onyomi":"カン (kan)","kunyomi":"あいだ・ま (aida/ma)","meaning":"মধ্যে","exampleJp":"家と学校の間です。","exampleRoma":"Ie to gakkou no aida desu.","exampleBn":"বাড়ি ও স্কুলের মধ্যে।"},
+{"id":54,"kanji":"畑","options":["ক্ষেত","বন","পাহাড়","নদী"],"correctOption":"ক্ষেত","reading":"はたけ (Kun)","onyomi":"—","kunyomi":"はたけ・はた (hatake/hata)","meaning":"ক্ষেত","exampleJp":"畑で野菜を作ります。","exampleRoma":"Hatake de yasai o tsukurimasu.","exampleBn":"ক্ষেতে সবজি চাষ করি।"},
+{"id":55,"kanji":"岩","options":["পাথর","মাটি","বালি","পানি"],"correctOption":"পাথর","reading":"いわ (Kun)","onyomi":"ガン (gan)","kunyomi":"いわ (iwa)","meaning":"পাথর","exampleJp":"岩の上に座ります。","exampleRoma":"Iwa no ue ni suwarimasu.","exampleBn":"পাথরের উপর বসি।"},
+{"id":56,"kanji":"目","options":["চোখ","কান","নাক","মুখ"],"correctOption":"চোখ","reading":"め (Kun)","onyomi":"モク (moku)","kunyomi":"め (me)","meaning":"চোখ","exampleJp":"目が大きいです。","exampleRoma":"Me ga ookii desu.","exampleBn":"চোখ বড়।"},
+{"id":57,"kanji":"耳","options":["কান","চোখ","নাক","মুখ"],"correctOption":"কান","reading":"みみ (Kun)","onyomi":"ジ (ji)","kunyomi":"みみ (mimi)","meaning":"কান","exampleJp":"耳が痛いです。","exampleRoma":"Mimi ga itai desu.","exampleBn":"কান ব্যথা করছে।"},
+{"id":58,"kanji":"手","options":["হাত","পা","মাথা","চোখ"],"correctOption":"হাত","reading":"て (Kun)","onyomi":"シュ (shu)","kunyomi":"て (te)","meaning":"হাত","exampleJp":"手を洗います。","exampleRoma":"Te o araimasu.","exampleBn":"হাত ধুই।"},
+{"id":59,"kanji":"足","options":["পা","হাত","মাথা","চোখ"],"correctOption":"পা","reading":"あし (Kun)","onyomi":"ソク (soku)","kunyomi":"あし・た(りる)・た(す) (ashi/tariru/tasu)","meaning":"পা","exampleJp":"足が長いです。","exampleRoma":"Ashi ga nagai desu.","exampleBn":"পা লম্বা।"},
+{"id":60,"kanji":"雨","options":["বৃষ্টি","বরফ","মেঘ","কুয়াশা"],"correctOption":"বৃষ্টি","reading":"あめ (Kun)","onyomi":"ウ (u)","kunyomi":"あめ・あま (ame/ama)","meaning":"বৃষ্টি","exampleJp":"雨が降っています。","exampleRoma":"Ame ga futte imasu.","exampleBn":"বৃষ্টি পড়ছে।"},
+{"id":61,"kanji":"竹","options":["বাঁশ","গাছ","ফুল","ঘাস"],"correctOption":"বাঁশ","reading":"たけ (Kun)","onyomi":"チク (chiku)","kunyomi":"たけ (take)","meaning":"বাঁশ","exampleJp":"竹がたくさんあります。","exampleRoma":"Take ga takusan arimasu.","exampleBn":"অনেক বাঁশ আছে।"},
+{"id":62,"kanji":"米","options":["চাল","গম","ডাল","আটা"],"correctOption":"চাল","reading":"こめ (Kun)","onyomi":"マイ・ベイ (mai/bei)","kunyomi":"こめ (kome)","meaning":"চাল","exampleJp":"米を食べます。","exampleRoma":"Kome o tabemasu.","exampleBn":"চাল খাই।"},
+{"id":63,"kanji":"貝","options":["ঝিনুক","মাছ","কাঁকড়া","চিংড়ি"],"correctOption":"ঝিনুক","reading":"かい (Kun)","onyomi":"バイ (bai)","kunyomi":"かい (kai)","meaning":"ঝিনুক","exampleJp":"貝を拾います。","exampleRoma":"Kai o hiroimasu.","exampleBn":"ঝিনুক কুড়াই।"},
+{"id":64,"kanji":"石","options":["পাথর","মাটি","বালি","পানি"],"correctOption":"পাথর","reading":"いし (Kun)","onyomi":"セキ (seki)","kunyomi":"いし (ishi)","meaning":"পাথর","exampleJp":"石が落ちています。","exampleRoma":"Ishi ga ochite imasu.","exampleBn":"পাথর পড়ে আছে।"},
+{"id":65,"kanji":"糸","options":["সুতা","দড়ি","কাপড়","কাগজ"],"correctOption":"সুতা","reading":"いと (Kun)","onyomi":"シ (shi)","kunyomi":"いと (ito)","meaning":"সুতা","exampleJp":"糸で縫います。","exampleRoma":"Ito de nuimasu.","exampleBn":"সুতা দিয়ে সেলাই করি।"},
+{"id":66,"kanji":"花","options":["ফুল","গাছ","পাতা","শিকড়"],"correctOption":"ফুল","reading":"はな (Kun)","onyomi":"カ (ka)","kunyomi":"はな (hana)","meaning":"ফুল","exampleJp":"花が咲いています。","exampleRoma":"Hana ga saite imasu.","exampleBn":"ফুল ফুটেছে।"},
+{"id":67,"kanji":"茶","options":["চা","কফি","পানি","দুধ"],"correctOption":"চা","reading":"チャ (On)","onyomi":"チャ・サ (cha/sa)","kunyomi":"—","meaning":"চা","exampleJp":"お茶を飲みます。","exampleRoma":"Ocha o nomimasu.","exampleBn":"চা খাই।"},
+{"id":68,"kanji":"肉","options":["মাংস","মাছ","সবজি","ফল"],"correctOption":"মাংস","reading":"ニク (On)","onyomi":"ニク (niku)","kunyomi":"—","meaning":"মাংস","exampleJp":"肉を食べます。","exampleRoma":"Niku o tabemasu.","exampleBn":"মাংস খাই।"},
+{"id":69,"kanji":"文","options":["বাক্য","শব্দ","অক্ষর","গল্প"],"correctOption":"বাক্য","reading":"ふみ (Kun)","onyomi":"ブン・モン (bun/mon)","kunyomi":"ふみ (fumi)","meaning":"বাক্য","exampleJp":"文を書きます。","exampleRoma":"Bun o kakimasu.","exampleBn":"বাক্য লিখি।"},
+{"id":70,"kanji":"字","options":["অক্ষর","শব্দ","বাক্য","গল্প"],"correctOption":"অক্ষর","reading":"ジ (On)","onyomi":"ジ (ji)","kunyomi":"—","meaning":"অক্ষর","exampleJp":"字を書きます。","exampleRoma":"Ji o kakimasu.","exampleBn":"অক্ষর লিখি।"},
+{"id":71,"kanji":"物","options":["জিনিস","মানুষ","প্রাণী","গাছ"],"correctOption":"জিনিস","reading":"もの (Kun)","onyomi":"ブツ・モツ (butsu/motsu)","kunyomi":"もの (mono)","meaning":"জিনিস","exampleJp":"買い物をします。","exampleRoma":"Kaimono o shimasu.","exampleBn":"কেনাকাটা করি।"},
+{"id":72,"kanji":"牛","options":["গরু","ঘোড়া","ছাগল","ভেড়া"],"correctOption":"গরু","reading":"うし (Kun)","onyomi":"ギュウ (gyuu)","kunyomi":"うし (ushi)","meaning":"গরু","exampleJp":"牛がいます。","exampleRoma":"Ushi ga imasu.","exampleBn":"গরু আছে।"},
+{"id":73,"kanji":"馬","options":["ঘোড়া","গরু","ছাগল","ভেড়া"],"correctOption":"ঘোড়া","reading":"うま (Kun)","onyomi":"バ (ba)","kunyomi":"うま・ま (uma/ma)","meaning":"ঘোড়া","exampleJp":"馬が走っています。","exampleRoma":"Uma ga hashitte imasu.","exampleBn":"ঘোড়া দৌড়াচ্ছে।"},
+{"id":74,"kanji":"鳥","options":["পাখি","মাছ","ঘোড়া","বিড়াল"],"correctOption":"পাখি","reading":"とり (Kun)","onyomi":"チョウ (chou)","kunyomi":"とり (tori)","meaning":"পাখি","exampleJp":"鳥が飛んでいます。","exampleRoma":"Tori ga tonde imasu.","exampleBn":"পাখি উড়ছে।"},
+{"id":75,"kanji":"魚","options":["মাছ","মাংস","পাখি","ঘোড়া"],"correctOption":"মাছ","reading":"さかな (Kun)","onyomi":"ギョ (gyo)","kunyomi":"さかな・うお (sakana/uo)","meaning":"মাছ","exampleJp":"魚を食べます。","exampleRoma":"Sakana o tabemasu.","exampleBn":"মাছ খাই।"},
+{"id":76,"kanji":"新","options":["নতুন","পুরোনো","বড়","ছোট"],"correctOption":"নতুন","reading":"あたら(しい) (Kun)","onyomi":"シン (shin)","kunyomi":"あたら(しい)・あら(た) (atarashii/arata)","meaning":"নতুন","exampleJp":"新しい車を買いました。","exampleRoma":"Atarashii kuruma o kaimashita.","exampleBn":"নতুন গাড়ি কিনেছি।"},
+{"id":77,"kanji":"古","options":["পুরোনো","নতুন","বড়","ছোট"],"correctOption":"পুরোনো","reading":"ふる(い) (Kun)","onyomi":"コ (ko)","kunyomi":"ふる(い) (furui)","meaning":"পুরোনো","exampleJp":"古い寺を見ました。","exampleRoma":"Furui tera o mimashita.","exampleBn":"পুরোনো মন্দির দেখেছি।"},
+{"id":78,"kanji":"長","options":["লম্বা","খাটো","বড়","ছোট"],"correctOption":"লম্বা","reading":"なが(い) (Kun)","onyomi":"チョウ (chou)","kunyomi":"なが(い) (nagai)","meaning":"লম্বা","exampleJp":"長い川があります。","exampleRoma":"Nagai kawa ga arimasu.","exampleBn":"লম্বা নদী আছে।"},
+{"id":79,"kanji":"短","options":["খাটো","লম্বা","বড়","ছোট"],"correctOption":"খাটো","reading":"みじか(い) (Kun)","onyomi":"タン (tan)","kunyomi":"みじか(い) (mijikai)","meaning":"খাটো","exampleJp":"短い時間で行きます。","exampleRoma":"Mijikai jikan de ikimasu.","exampleBn":"অল্প সময়ে যাই।"},
+{"id":80,"kanji":"高","options":["উচ্চ","নিচু","লম্বা","খাটো"],"correctOption":"উচ্চ","reading":"たか(い) (Kun)","onyomi":"コウ (kou)","kunyomi":"たか(い) (takai)","meaning":"উচ্চ","exampleJp":"高い山に登ります。","exampleRoma":"Takai yama ni noborimasu.","exampleBn":"উঁচু পাহাড়ে উঠি।"},
+{"id":81,"kanji":"安","options":["সস্তা","দামি","বড়","ছোট"],"correctOption":"সস্তা","reading":"やす(い) (Kun)","onyomi":"アン (an)","kunyomi":"やす(い) (yasui)","meaning":"সস্তা","exampleJp":"安い店で買います。","exampleRoma":"Yasui mise de kaimasu.","exampleBn":"সস্তা দোকানে কিনি।"},
+{"id":82,"kanji":"低","options":["নিচু","উচ্চ","লম্বা","খাটো"],"correctOption":"নিচু","reading":"ひく(い) (Kun)","onyomi":"テイ (tei)","kunyomi":"ひく(い) (hikui)","meaning":"নিচু","exampleJp":"低い山です。","exampleRoma":"Hikui yama desu.","exampleBn":"নিচু পাহাড়।"},
+{"id":83,"kanji":"暗","options":["অন্ধকার","উজ্জ্বল","ঠান্ডা","গরম"],"correctOption":"অন্ধকার","reading":"くら(い) (Kun)","onyomi":"アン (an)","kunyomi":"くら(い) (kurai)","meaning":"অন্ধকার","exampleJp":"部屋が暗いです。","exampleRoma":"Heya ga kurai desu.","exampleBn":"ঘর অন্ধকার।"},
+{"id":84,"kanji":"多","options":["অনেক","অল্প","সব","কিছু"],"correctOption":"অনেক","reading":"おお(い) (Kun)","onyomi":"タ (ta)","kunyomi":"おお(い) (ooi)","meaning":"অনেক","exampleJp":"人が多いです。","exampleRoma":"Hito ga ooi desu.","exampleBn":"অনেক মানুষ।"},
+{"id":85,"kanji":"少","options":["অল্প","অনেক","সব","কিছু"],"correctOption":"অল্প","reading":"すく(ない) (Kun)","onyomi":"ショウ (shou)","kunyomi":"すく(ない)・すこ(し) (sukunai/sukoshi)","meaning":"অল্প","exampleJp":"少し休みます。","exampleRoma":"Sukoshi yasumimasu.","exampleBn":"একটু বিশ্রাম নিই।"},
+{"id":86,"kanji":"行","options":["যাওয়া","আসা","দেখা","খাওয়া"],"correctOption":"যাওয়া","reading":"い(く) (Kun)","onyomi":"コウ・ギョウ (kou/gyou)","kunyomi":"い(く)・ゆ(く)・おこな(う) (iku/yuku/okonau)","meaning":"যাওয়া","exampleJp":"学校へ行きます。","exampleRoma":"Gakkou e ikimasu.","exampleBn":"স্কুলে যাই।"},
+{"id":87,"kanji":"来","options":["আসা","যাওয়া","দেখা","শোনা"],"correctOption":"আসা","reading":"く(る) (Kun)","onyomi":"ライ (rai)","kunyomi":"く(る) (kuru)","meaning":"আসা","exampleJp":"友だちが来ます。","exampleRoma":"Tomodachi ga kimasu.","exampleBn":"বন্ধু আসবে।"},
+{"id":88,"kanji":"食","options":["খাওয়া","পান করা","ঘুমানো","হাঁটা"],"correctOption":"খাওয়া","reading":"た(べる) (Kun)","onyomi":"ショク (shoku)","kunyomi":"た(べる)・く(う) (taberu/kuu)","meaning":"খাওয়া","exampleJp":"ご飯を食べます。","exampleRoma":"Gohan o tabemasu.","exampleBn":"ভাত খাই।"},
+{"id":89,"kanji":"飲","options":["পান করা","খাওয়া","ঘুমানো","হাঁটা"],"correctOption":"পান করা","reading":"の(む) (Kun)","onyomi":"イン (in)","kunyomi":"の(む) (nomu)","meaning":"পান করা","exampleJp":"水を飲みます。","exampleRoma":"Mizu o nomimasu.","exampleBn":"পানি খাই।"},
+{"id":90,"kanji":"見","options":["দেখা","শোনা","বলা","পড়া"],"correctOption":"দেখা","reading":"み(る) (Kun)","onyomi":"ケン (ken)","kunyomi":"み(る)・み(える)・み(せる) (miru/mieru/miseru)","meaning":"দেখা","exampleJp":"テレビを見ます。","exampleRoma":"Terebi o mimasu.","exampleBn":"টিভি দেখি।"},
+{"id":91,"kanji":"聞","options":["শোনা","দেখা","বলা","পড়া"],"correctOption":"শোনা","reading":"き(く) (Kun)","onyomi":"ブン (bun)","kunyomi":"き(く)・き(こえる) (kiku/kikoeru)","meaning":"শোনা","exampleJp":"音楽を聞きます。","exampleRoma":"Ongaku o kikimasu.","exampleBn":"গান শুনি।"},
+{"id":92,"kanji":"読","options":["পড়া","লেখা","শোনা","বলা"],"correctOption":"পড়া","reading":"よ(む) (Kun)","onyomi":"ドク (doku)","kunyomi":"よ(む) (yomu)","meaning":"পড়া","exampleJp":"本を読みます。","exampleRoma":"Hon o yomimasu.","exampleBn":"বই পড়ি।"},
+{"id":93,"kanji":"書","options":["লেখা","পড়া","শোনা","বলা"],"correctOption":"লেখা","reading":"か(く) (Kun)","onyomi":"ショ (sho)","kunyomi":"か(く) (kaku)","meaning":"লেখা","exampleJp":"手紙を書きます。","exampleRoma":"Tegami o kakimasu.","exampleBn":"চিঠি লিখি।"},
+{"id":94,"kanji":"話","options":["কথা বলা","খাওয়া","ঘুমানো","দৌড়ানো"],"correctOption":"কথা বলা","reading":"はな(す) (Kun)","onyomi":"ワ (wa)","kunyomi":"はな(す)・はなし (hanasu/hanashi)","meaning":"কথা বলা","exampleJp":"友だちと話します。","exampleRoma":"Tomodachi to hanashimasu.","exampleBn":"বন্ধুর সাথে কথা বলি।"},
+{"id":95,"kanji":"買","options":["কেনা","বিক্রি করা","ধার দেওয়া","ভাড়া করা"],"correctOption":"কেনা","reading":"か(う) (Kun)","onyomi":"バイ (bai)","kunyomi":"か(う) (kau)","meaning":"কেনা","exampleJp":"本を買います。","exampleRoma":"Hon o kaimasu.","exampleBn":"বই কিনি।"},
+{"id":96,"kanji":"教","options":["শেখানো","শেখা","খেলা","দেখা"],"correctOption":"শেখানো","reading":"おし(える) (Kun)","onyomi":"キョウ (kyou)","kunyomi":"おし(える)・おそ(わる) (oshieru/osowaru)","meaning":"শেখানো","exampleJp":"日本語を教えます。","exampleRoma":"Nihongo o oshiemasu.","exampleBn":"জাপানি ভাষা শেখাই।"},
+{"id":97,"kanji":"朝","options":["সকাল","দুপুর","বিকেল","রাত"],"correctOption":"সকাল","reading":"あさ (Kun)","onyomi":"チョウ (chou)","kunyomi":"あさ (asa)","meaning":"সকাল","exampleJp":"朝ごはんを食べます。","exampleRoma":"Asagohan o tabemasu.","exampleBn":"সকালের নাস্তা খাই।"},
+{"id":98,"kanji":"昼","options":["দুপুর","সকাল","বিকেল","রাত"],"correctOption":"দুপুর","reading":"ひる (Kun)","onyomi":"チュウ (chuu)","kunyomi":"ひる (hiru)","meaning":"দুপুর","exampleJp":"昼ごはんを食べました。","exampleRoma":"Hirugohan o tabemashita.","exampleBn":"দুপুরের খাবার খেয়েছি।"},
+{"id":99,"kanji":"夜","options":["রাত","সকাল","দুপুর","বিকেল"],"correctOption":"রাত","reading":"よる (Kun)","onyomi":"ヤ (ya)","kunyomi":"よる・よ (yoru/yo)","meaning":"রাত","exampleJp":"夜は静かです。","exampleRoma":"Yoru wa shizuka desu.","exampleBn":"রাত শান্ত।"},
+{"id":100,"kanji":"晩","options":["সন্ধ্যা","সকাল","দুপুর","রাত"],"correctOption":"সন্ধ্যা","reading":"バン (On)","onyomi":"バン (ban)","kunyomi":"—","meaning":"সন্ধ্যা","exampleJp":"晩ごはんを食べます。","exampleRoma":"Bangohan o tabemasu.","exampleBn":"রাতের খাবার খাই।"},
+{"id":101,"kanji":"夕","options":["সন্ধ্যা","সকাল","দুপুর","রাত"],"correctOption":"সন্ধ্যা","reading":"ゆう (Kun)","onyomi":"セキ (seki)","kunyomi":"ゆう (yuu)","meaning":"সন্ধ্যা","exampleJp":"夕方に散歩します。","exampleRoma":"Yuugata ni sanpo shimasu.","exampleBn":"সন্ধ্যায় হাঁটাহাঁটি করি।"},
+{"id":102,"kanji":"方","options":["দিক","আকার","রং","নাম"],"correctOption":"দিক","reading":"かた (Kun)","onyomi":"ホウ (hou)","kunyomi":"かた・がた (kata/gata)","meaning":"দিক","exampleJp":"あの方を知っていますか。","exampleRoma":"Ano kata o shitte imasu ka.","exampleBn":"ওই ব্যক্তিকে চেনেন?"},
+{"id":103,"kanji":"午","options":["দুপুর","সকাল","বিকেল","রাত"],"correctOption":"দুপুর","reading":"ゴ (On)","onyomi":"ゴ (go)","kunyomi":"—","meaning":"দুপুর","exampleJp":"午前中に勉強します。","exampleRoma":"Gozenchuu ni benkyou shimasu.","exampleBn":"সকালে পড়াশোনা করি।"},
+{"id":104,"kanji":"前","options":["সামনে","পিছনে","উপরে","নিচে"],"correctOption":"সামনে","reading":"まえ (Kun)","onyomi":"ゼン (zen)","kunyomi":"まえ (mae)","meaning":"সামনে","exampleJp":"駅の前で待ちます。","exampleRoma":"Eki no mae de machimasu.","exampleBn":"স্টেশনের সামনে অপেক্ষা করি।"},
+{"id":105,"kanji":"後","options":["পরে","আগে","এখন","সবসময়"],"correctOption":"পরে","reading":"あと・のち (Kun)","onyomi":"ゴ・コウ (go/kou)","kunyomi":"あと・のち・うし(ろ) (ato/nochi/ushiro)","meaning":"পরে","exampleJp":"後で電話します。","exampleRoma":"Ato de denwa shimasu.","exampleBn":"পরে ফোন করব।"},
+{"id":106,"kanji":"毎","options":["প্রত্যেক","কোনো","সব","অন্য"],"correctOption":"প্রত্যেক","reading":"マイ (On)","onyomi":"マイ (mai)","kunyomi":"—","meaning":"প্রত্যেক","exampleJp":"毎日勉強します。","exampleRoma":"Mainichi benkyou shimasu.","exampleBn":"প্রতিদিন পড়াশোনা করি।"},
+{"id":107,"kanji":"週","options":["সপ্তাহ","মাস","বছর","দিন"],"correctOption":"সপ্তাহ","reading":"シュウ (On)","onyomi":"シュウ (shuu)","kunyomi":"—","meaning":"সপ্তাহ","exampleJp":"一週間に一回泳ぎます。","exampleRoma":"Isshuukan ni ikkai oyogimasu.","exampleBn":"সপ্তাহে একবার সাঁতার কাটি।"},
+{"id":108,"kanji":"曜","options":["বার","দিন","মাস","বছর"],"correctOption":"বার","reading":"ヨウ (On)","onyomi":"ヨウ (you)","kunyomi":"—","meaning":"বার","exampleJp":"月曜日に会います。","exampleRoma":"Getsuyoubi ni aimasu.","exampleBn":"সোমবার দেখা করি।"},
+{"id":109,"kanji":"作","options":["তৈরি করা","খাওয়া","পড়া","লেখা"],"correctOption":"তৈরি করা","reading":"つく(る) (Kun)","onyomi":"サク・サ (saku/sa)","kunyomi":"つく(る) (tsukuru)","meaning":"তৈরি করা","exampleJp":"料理を作ります。","exampleRoma":"Ryouri o tsukurimasu.","exampleBn":"রান্না করি।"},
+{"id":110,"kanji":"泳","options":["সাঁতার কাটা","দৌড়ানো","হাঁটা","লাফানো"],"correctOption":"সাঁতার কাটা","reading":"およ(ぐ) (Kun)","onyomi":"エイ (ei)","kunyomi":"およ(ぐ) (oyogu)","meaning":"সাঁতার কাটা","exampleJp":"海で泳ぎます。","exampleRoma":"Umi de oyogimasu.","exampleBn":"সমুদ্রে সাঁতার কাটি।"},
+{"id":111,"kanji":"油","options":["তেল","পানি","দুধ","রস"],"correctOption":"তেল","reading":"あぶら (Kun)","onyomi":"ユ (yu)","kunyomi":"あぶら (abura)","meaning":"তেল","exampleJp":"油を使います。","exampleRoma":"Abura o tsukaimasu.","exampleBn":"তেল ব্যবহার করি।"},
+{"id":112,"kanji":"海","options":["সমুদ্র","নদী","হ্রদ","পুকুর"],"correctOption":"সমুদ্র","reading":"うみ (Kun)","onyomi":"カイ (kai)","kunyomi":"うみ (umi)","meaning":"সমুদ্র","exampleJp":"海へ行きます。","exampleRoma":"Umi e ikimasu.","exampleBn":"সমুদ্রে যাই।"},
+{"id":113,"kanji":"酒","options":["মদ","চা","পানি","দুধ"],"correctOption":"মদ","reading":"さけ (Kun)","onyomi":"シュ (shu)","kunyomi":"さけ (sake)","meaning":"মদ","exampleJp":"酒を飲みます。","exampleRoma":"Sake o nomimasu.","exampleBn":"মদ খাই।"},
+{"id":114,"kanji":"待","options":["অপেক্ষা করা","যাওয়া","আসা","দেখা"],"correctOption":"অপেক্ষা করা","reading":"ま(つ) (Kun)","onyomi":"タイ (tai)","kunyomi":"ま(つ)・まち (matsu/machi)","meaning":"অপেক্ষা করা","exampleJp":"駅で待ちます。","exampleRoma":"Eki de machimasu.","exampleBn":"স্টেশনে অপেক্ষা করি।"},
+{"id":115,"kanji":"校","options":["স্কুল","বাড়ি","দোকান","অফিস"],"correctOption":"স্কুল","reading":"コウ (On)","onyomi":"コウ (kou)","kunyomi":"—","meaning":"স্কুল","exampleJp":"学校へ行きます。","exampleRoma":"Gakkou e ikimasu.","exampleBn":"স্কুলে যাই।"},
+{"id":116,"kanji":"時","options":["সময়","দিন","মাস","বছর"],"correctOption":"সময়","reading":"とき (Kun)","onyomi":"ジ (ji)","kunyomi":"とき (toki)","meaning":"সময়","exampleJp":"時間がありません。","exampleRoma":"Jikan ga arimasen.","exampleBn":"সময় নেই।"},
+{"id":117,"kanji":"言","options":["বলা","শোনা","দেখা","লেখা"],"correctOption":"বলা","reading":"い(う) (Kun)","onyomi":"ゲン・ゴン (gen/gon)","kunyomi":"い(う) (iu)","meaning":"বলা","exampleJp":"名前を言ってください。","exampleRoma":"Namae o itte kudasai.","exampleBn":"নাম বলুন।"},
+{"id":118,"kanji":"計","options":["মাপা","খাওয়া","পড়া","ঘুমানো"],"correctOption":"মাপা","reading":"はか(る) (Kun)","onyomi":"ケイ (kei)","kunyomi":"はか(る) (hakaru)","meaning":"মাপা","exampleJp":"時間を計ります。","exampleRoma":"Jikan o hakarimasu.","exampleBn":"সময় মাপি।"},
+{"id":119,"kanji":"語","options":["ভাষা","গান","ছবি","খেলা"],"correctOption":"ভাষা","reading":"かた(る) (Kun)","onyomi":"ゴ (go)","kunyomi":"かた(る) (kataru)","meaning":"ভাষা","exampleJp":"日本語を勉強します。","exampleRoma":"Nihongo o benkyou shimasu.","exampleBn":"জাপানি ভাষা শিখি।"},
+{"id":120,"kanji":"飯","options":["ভাত","রুটি","মাছ","মাংস"],"correctOption":"ভাত","reading":"めし (Kun)","onyomi":"ハン (han)","kunyomi":"めし (meshi)","meaning":"ভাত","exampleJp":"ご飯を食べます。","exampleRoma":"Gohan o tabemasu.","exampleBn":"ভাত খাই।"},
+{"id":121,"kanji":"家","options":["বাড়ি","স্কুল","দোকান","অফিস"],"correctOption":"বাড়ি","reading":"いえ (Kun)","onyomi":"カ・ケ (ka/ke)","kunyomi":"いえ・や (ie/ya)","meaning":"বাড়ি","exampleJp":"家に帰ります。","exampleRoma":"Ie ni kaerimasu.","exampleBn":"বাড়ি ফিরি।"},
+{"id":122,"kanji":"英","options":["ইংল্যান্ড","আমেরিকা","ফ্রান্স","জার্মানি"],"correctOption":"ইংল্যান্ড","reading":"エイ (On)","onyomi":"エイ (ei)","kunyomi":"—","meaning":"ইংল্যান্ড","exampleJp":"英語を勉強します。","exampleRoma":"Eigo o benkyou shimasu.","exampleBn":"ইংরেজি শিখি।"},
+{"id":123,"kanji":"薬","options":["ওষুধ","খাবার","পানি","চা"],"correctOption":"ওষুধ","reading":"くすり (Kun)","onyomi":"ヤク (yaku)","kunyomi":"くすり (kusuri)","meaning":"ওষুধ","exampleJp":"薬を飲みます。","exampleRoma":"Kusuri o nomimasu.","exampleBn":"ওষুধ খাই।"},
+{"id":124,"kanji":"会","options":["মিলিত হওয়া","বিচ্ছেদ","যাওয়া","আসা"],"correctOption":"মিলিত হওয়া","reading":"あ(う) (Kun)","onyomi":"カイ (kai)","kunyomi":"あ(う) (au)","meaning":"মিলিত হওয়া","exampleJp":"友だちに会います。","exampleRoma":"Tomodachi ni aimasu.","exampleBn":"বন্ধুর সাথে দেখা করি।"},
+{"id":125,"kanji":"今","options":["এখন","আগে","পরে","সবসময়"],"correctOption":"এখন","reading":"いま (Kun)","onyomi":"コン (kon)","kunyomi":"いま (ima)","meaning":"এখন","exampleJp":"今、勉強しています。","exampleRoma":"Ima, benkyou shite imasu.","exampleBn":"এখন পড়াশোনা করছি।"},
+{"id":126,"kanji":"雪","options":["বরফ","বৃষ্টি","মেঘ","কুয়াশা"],"correctOption":"বরফ","reading":"ゆき (Kun)","onyomi":"セツ (setsu)","kunyomi":"ゆき (yuki)","meaning":"বরফ","exampleJp":"雪が降っています。","exampleRoma":"Yuki ga futte imasu.","exampleBn":"বরফ পড়ছে।"},
+{"id":127,"kanji":"雲","options":["মেঘ","বৃষ্টি","বরফ","কুয়াশা"],"correctOption":"মেঘ","reading":"くも (Kun)","onyomi":"ウン (un)","kunyomi":"くも (kumo)","meaning":"মেঘ","exampleJp":"空に雲があります。","exampleRoma":"Sora ni kumo ga arimasu.","exampleBn":"আকাশে মেঘ আছে।"},
+{"id":128,"kanji":"電","options":["বিদ্যুৎ","পানি","বাতাস","আগুন"],"correctOption":"বিদ্যুৎ","reading":"デン (On)","onyomi":"デン (den)","kunyomi":"—","meaning":"বিদ্যুৎ","exampleJp":"電気をつけます。","exampleRoma":"Denki o tsukemasu.","exampleBn":"বিদ্যুৎ জ্বালাই।"},
+{"id":129,"kanji":"広","options":["প্রশস্ত","সংকীর্ণ","লম্বা","খাটো"],"correctOption":"প্রশস্ত","reading":"ひろ(い) (Kun)","onyomi":"コウ (kou)","kunyomi":"ひろ(い) (hiroi)","meaning":"প্রশস্ত","exampleJp":"広い部屋に住んでいます。","exampleRoma":"Hiroi heya ni sunde imasu.","exampleBn":"প্রশস্ত ঘরে থাকি।"},
+{"id":130,"kanji":"店","options":["দোকান","বাজার","অফিস","স্কুল"],"correctOption":"দোকান","reading":"みせ (Kun)","onyomi":"テン (ten)","kunyomi":"みせ (mise)","meaning":"দোকান","exampleJp":"店で買い物をします。","exampleRoma":"Mise de kaimono o shimasu.","exampleBn":"দোকানে কেনাকাটা করি।"},
+{"id":131,"kanji":"度","options":["ডিগ্রি","মিটার","কিলো","লিটার"],"correctOption":"ডিগ্রি","reading":"ド (On)","onyomi":"ド (do)","kunyomi":"—","meaning":"ডিগ্রি","exampleJp":"温度を計ります。","exampleRoma":"Ondo o hakarimasu.","exampleBn":"তাপমাত্রা মাপি।"},
+{"id":132,"kanji":"病","options":["অসুস্থতা","সুস্থতা","ব্যথা","ক্লান্তি"],"correctOption":"অসুস্থতা","reading":"ビョウ (On)","onyomi":"ビョウ (byou)","kunyomi":"—","meaning":"অসুস্থতা","exampleJp":"病気になりました。","exampleRoma":"Byouki ni narimashita.","exampleBn":"অসুস্থ হয়ে পড়েছি।"},
+{"id":133,"kanji":"疲","options":["ক্লান্তি","সতেজতা","ব্যথা","আনন্দ"],"correctOption":"ক্লান্তি","reading":"つか(れる) (Kun)","onyomi":"ヒ (hi)","kunyomi":"つか(れる) (tsukareru)","meaning":"ক্লান্তি","exampleJp":"疲れました。","exampleRoma":"Tsukaremashita.","exampleBn":"ক্লান্ত হয়ে পড়েছি।"},
+{"id":134,"kanji":"痛","options":["ব্যথা","আনন্দ","ক্লান্তি","সতেজতা"],"correctOption":"ব্যথা","reading":"いた(い) (Kun)","onyomi":"ツウ (tsuu)","kunyomi":"いた(い)・いた(む) (itai/itamu)","meaning":"ব্যথা","exampleJp":"頭が痛いです。","exampleRoma":"Atama ga itai desu.","exampleBn":"মাথা ব্যথা করছে।"},
+{"id":135,"kanji":"屋","options":["দোকান","বাড়ি","স্কুল","অফিস"],"correctOption":"দোকান","reading":"や (Kun)","onyomi":"オク (oku)","kunyomi":"や (ya)","meaning":"দোকান","exampleJp":"本屋へ行きます。","exampleRoma":"Hon'ya e ikimasu.","exampleBn":"বইয়ের দোকানে যাই।"},
+{"id":136,"kanji":"国","options":["দেশ","শহর","গ্রাম","বাড়ি"],"correctOption":"দেশ","reading":"くに (Kun)","onyomi":"コク (koku)","kunyomi":"くに (kuni)","meaning":"দেশ","exampleJp":"日本は島国です。","exampleRoma":"Nihon wa shimaguni desu.","exampleBn":"জাপান দ্বীপ দেশ।"},
+{"id":137,"kanji":"回","options":["বার","দিন","মাস","বছর"],"correctOption":"বার","reading":"まわ(る) (Kun)","onyomi":"カイ (kai)","kunyomi":"まわ(る)・まわ(す) (mawaru/mawasu)","meaning":"বার","exampleJp":"一回行きました。","exampleRoma":"Ikkai ikimashita.","exampleBn":"একবার গিয়েছি।"},
+{"id":138,"kanji":"困","options":["সমস্যা","আনন্দ","সুখ","শান্তি"],"correctOption":"সমস্যা","reading":"こま(る) (Kun)","onyomi":"コン (kon)","kunyomi":"こま(る) (komaru)","meaning":"সমস্যা","exampleJp":"困っています。","exampleRoma":"Komatte imasu.","exampleBn":"সমস্যায় পড়েছি।"},
+{"id":139,"kanji":"開","options":["খোলা","বন্ধ করা","ভাঙা","তৈরি করা"],"correctOption":"খোলা","reading":"あ(く) (Kun)","onyomi":"カイ (kai)","kunyomi":"あ(く)・ひら(く) (aku/hiraku)","meaning":"খোলা","exampleJp":"ドアを開けます。","exampleRoma":"Doa o akemasu.","exampleBn":"দরজা খুলি।"},
+{"id":140,"kanji":"閉","options":["বন্ধ করা","খোলা","ভাঙা","তৈরি করা"],"correctOption":"বন্ধ করা","reading":"し(まる) (Kun)","onyomi":"ヘイ (hei)","kunyomi":"し(まる)・し(める)・と(じる) (shimaru/shimeru/tojiru)","meaning":"বন্ধ করা","exampleJp":"店が閉まりました。","exampleRoma":"Mise ga shimarimashita.","exampleBn":"দোকান বন্ধ হয়ে গেছে।"},
+{"id":141,"kanji":"近","options":["কাছে","দূরে","উপরে","নিচে"],"correctOption":"কাছে","reading":"ちか(い) (Kun)","onyomi":"キン (kin)","kunyomi":"ちか(い) (chikai)","meaning":"কাছে","exampleJp":"学校は家に近いです。","exampleRoma":"Gakkou wa ie ni chikai desu.","exampleBn":"স্কুল বাড়ির কাছে।"},
+{"id":142,"kanji":"遠","options":["দূর","কাছে","লম্বা","খাটো"],"correctOption":"দূর","reading":"とお(い) (Kun)","onyomi":"エン (en)","kunyomi":"とお(い) (tooi)","meaning":"দূর","exampleJp":"駅は遠いです。","exampleRoma":"Eki wa tooi desu.","exampleBn":"স্টেশন দূরে।"},
+{"id":143,"kanji":"速","options":["দ্রুত","ধীর","লম্বা","খাটো"],"correctOption":"দ্রুত","reading":"はや(い) (Kun)","onyomi":"ソク (soku)","kunyomi":"はや(い) (hayai)","meaning":"দ্রুত","exampleJp":"速い車です。","exampleRoma":"Hayai kuruma desu.","exampleBn":"দ্রুত গাড়ি।"},
+{"id":144,"kanji":"遅","options":["ধীর","দ্রুত","লম্বা","খাটো"],"correctOption":"ধীর","reading":"おそ(い) (Kun)","onyomi":"チ (chi)","kunyomi":"おそ(い)・おく(れる) (osoi/okureru)","meaning":"ধীর","exampleJp":"遅い電車です。","exampleRoma":"Osoi densha desu.","exampleBn":"ধীর ট্রেন।"},
+{"id":145,"kanji":"道","options":["পথ","সেতু","বাড়ি","দরজা"],"correctOption":"পথ","reading":"みち (Kun)","onyomi":"ドウ (dou)","kunyomi":"みち (michi)","meaning":"পথ","exampleJp":"この道をまっすぐ行きます。","exampleRoma":"Kono michi o massugu ikimasu.","exampleBn":"এই পথ সোজা যাই।"},
+{"id":146,"kanji":"青","options":["নীল","লাল","হলুদ","সবুজ"],"correctOption":"নীল","reading":"あお(い) (Kun)","onyomi":"セイ (sei)","kunyomi":"あお(い) (aoi)","meaning":"নীল","exampleJp":"青い空がきれいです。","exampleRoma":"Aoi sora ga kirei desu.","exampleBn":"নীল আকাশ সুন্দর।"},
+{"id":147,"kanji":"晴","options":["রোদ","বৃষ্টি","মেঘ","বরফ"],"correctOption":"রোদ","reading":"は(れる) (Kun)","onyomi":"セイ (sei)","kunyomi":"は(れる)・は(れ) (hareru/hare)","meaning":"রোদ","exampleJp":"明日は晴れます。","exampleRoma":"Ashita wa haremasu.","exampleBn":"আগামীকাল রোদ উঠবে।"},
+{"id":148,"kanji":"静","options":["শান্ত","শব্দ","উচ্চ","নিচু"],"correctOption":"শান্ত","reading":"しず(かな) (Kun)","onyomi":"セイ (sei)","kunyomi":"しず(かな) (shizukana)","meaning":"শান্ত","exampleJp":"静かな部屋です。","exampleRoma":"Shizukana heya desu.","exampleBn":"শান্ত ঘর।"},
+{"id":149,"kanji":"寺","options":["মন্দির","দোকান","স্কুল","বাড়ি"],"correctOption":"মন্দির","reading":"てら (Kun)","onyomi":"ジ (ji)","kunyomi":"てら (tera)","meaning":"মন্দির","exampleJp":"寺を見学します。","exampleRoma":"Tera o kengaku shimasu.","exampleBn":"মন্দির দেখতে যাই।"},
+{"id":150,"kanji":"持","options":["ধরা","ছাড়া","ফেলা","তোলা"],"correctOption":"ধরা","reading":"も(つ) (Kun)","onyomi":"ジ (ji)","kunyomi":"も(つ) (motsu)","meaning":"ধরা","exampleJp":"荷物を持ちます。","exampleRoma":"Nimotsu o mochimasu.","exampleBn":"মালপত্র বহন করি।"},
+{"id":151,"kanji":"荷","options":["মাল","বই","কাগজ","কলম"],"correctOption":"মাল","reading":"に (Kun)","onyomi":"カ (ka)","kunyomi":"に (ni)","meaning":"মাল","exampleJp":"荷物を運びます。","exampleRoma":"Nimotsu o hakobimasu.","exampleBn":"মালপত্র পরিবহন করি।"},
+{"id":152,"kanji":"歌","options":["গান","নাচ","ছবি","কবিতা"],"correctOption":"গান","reading":"うた (Kun)","onyomi":"カ (ka)","kunyomi":"うた・うた(う) (uta/utau)","meaning":"গান","exampleJp":"歌を歌います。","exampleRoma":"Uta o utaimasu.","exampleBn":"গান গাই।"},
+{"id":153,"kanji":"友","options":["বন্ধু","শত্রু","শিক্ষক","ছাত্র"],"correctOption":"বন্ধু","reading":"とも (Kun)","onyomi":"ユウ (yuu)","kunyomi":"とも (tomo)","meaning":"বন্ধু","exampleJp":"友だちと遊びます。","exampleRoma":"Tomodachi to asobimasu.","exampleBn":"বন্ধুর সাথে খেলি।"},
+{"id":154,"kanji":"父","options":["বাবা","মা","ভাই","বোন"],"correctOption":"বাবা","reading":"ちち (Kun)","onyomi":"フ (fu)","kunyomi":"ちち (chichi)","meaning":"বাবা","exampleJp":"父は会社員です。","exampleRoma":"Chichi wa kaishain desu.","exampleBn":"বাবা কোম্পানির কর্মচারী।"},
+{"id":155,"kanji":"母","options":["মা","বাবা","দাদি","বোন"],"correctOption":"মা","reading":"はは (Kun)","onyomi":"ボ (bo)","kunyomi":"はは (haha)","meaning":"মা","exampleJp":"母は料理が上手です。","exampleRoma":"Haha wa ryouri ga jouzu desu.","exampleBn":"মা রান্নায় দক্ষ।"},
+{"id":156,"kanji":"兄","options":["বড় ভাই","ছোট ভাই","বড় বোন","ছোট বোন"],"correctOption":"বড় ভাই","reading":"あに (Kun)","onyomi":"ケイ・キョウ (kei/kyou)","kunyomi":"あに (ani)","meaning":"বড় ভাই","exampleJp":"兄はスポーツが好きです。","exampleRoma":"Ani wa supootsu ga suki desu.","exampleBn":"বড় ভাই খেলাধুলা পছন্দ করে।"},
+{"id":157,"kanji":"姉","options":["বড় বোন","ছোট বোন","বড় ভাই","ছোট ভাই"],"correctOption":"বড় বোন","reading":"あね (Kun)","onyomi":"シ (shi)","kunyomi":"あね (ane)","meaning":"বড় বোন","exampleJp":"姉は大学に通っています。","exampleRoma":"Ane wa daigaku ni kayotte imasu.","exampleBn":"বড় বোন বিশ্ববিদ্যালয়ে পড়ে।"},
+{"id":158,"kanji":"弟","options":["ছোট ভাই","বড় ভাই","ছোট বোন","বড় বোন"],"correctOption":"ছোট ভাই","reading":"おとうと (Kun)","onyomi":"テイ・ダイ (tei/dai)","kunyomi":"おとうと (otouto)","meaning":"ছোট ভাই","exampleJp":"弟はゲームをしています。","exampleRoma":"Otouto wa geemu o shite imasu.","exampleBn":"ছোট ভাই গেম খেলছে।"},
+{"id":159,"kanji":"妹","options":["ছোট বোন","বড় বোন","ছোট ভাই","বড় ভাই"],"correctOption":"ছোট বোন","reading":"いもうと (Kun)","onyomi":"マイ (mai)","kunyomi":"いもうと (imouto)","meaning":"ছোট বোন","exampleJp":"妹は小学生です。","exampleRoma":"Imouto wa shougakusei desu.","exampleBn":"ছোট বোন প্রাথমিকের ছাত্রী।"},
+{"id":160,"kanji":"夫","options":["স্বামী","স্ত্রী","পুত্র","কন্যা"],"correctOption":"স্বামী","reading":"おっと (Kun)","onyomi":"フ・フウ (fu/fuu)","kunyomi":"おっと (otto)","meaning":"স্বামী","exampleJp":"夫は会社員です。","exampleRoma":"Otto wa kaishain desu.","exampleBn":"স্বামী কোম্পানির কর্মচারী।"},
+{"id":161,"kanji":"妻","options":["স্ত্রী","স্বামী","পুত্র","কন্যা"],"correctOption":"স্ত্রী","reading":"つま (Kun)","onyomi":"サイ (sai)","kunyomi":"つま (tsuma)","meaning":"স্ত্রী","exampleJp":"妻は先生です。","exampleRoma":"Tsuma wa sensei desu.","exampleBn":"স্ত্রী শিক্ষক।"},
+{"id":162,"kanji":"彼","options":["সে","আমি","তুমি","আপনি"],"correctOption":"সে","reading":"かれ (Kun)","onyomi":"ヒ (hi)","kunyomi":"かれ・かの (kare/kano)","meaning":"সে","exampleJp":"彼は学生です。","exampleRoma":"Kare wa gakusei desu.","exampleBn":"সে ছাত্র।"},
+{"id":163,"kanji":"主","options":["মালিক","কর্মচারী","শিক্ষক","ছাত্র"],"correctOption":"মালিক","reading":"おも(な) (Kun)","onyomi":"シュ (shu)","kunyomi":"おも(な)・ぬし (omona/nushi)","meaning":"মালিক","exampleJp":"主人は医者です。","exampleRoma":"Shujin wa isha desu.","exampleBn":"স্বামী ডাক্তার।"},
+{"id":164,"kanji":"出","options":["বের হওয়া","ঢোকা","থাকা","বসা"],"correctOption":"বের হওয়া","reading":"で(る) (Kun)","onyomi":"シュツ (shutsu)","kunyomi":"で(る)・だ(す) (deru/dasu)","meaning":"বের হওয়া","exampleJp":"家を出ます。","exampleRoma":"Ie o demasu.","exampleBn":"বাড়ি থেকে বের হই।"},
+{"id":165,"kanji":"入","options":["ঢোকা","বের হওয়া","থাকা","বসা"],"correctOption":"ঢোকা","reading":"はい(る) (Kun)","onyomi":"ニュウ (nyuu)","kunyomi":"はい(る)・い(れる) (hairu/ireru)","meaning":"ঢোকা","exampleJp":"部屋に入ります。","exampleRoma":"Heya ni hairimasu.","exampleBn":"ঘরে ঢুকি।"},
+{"id":166,"kanji":"乗","options":["চড়া","নামা","দাঁড়ানো","বসা"],"correctOption":"চড়া","reading":"の(る) (Kun)","onyomi":"ジョウ (jou)","kunyomi":"の(る)・の(せる) (noru/noseru)","meaning":"চড়া","exampleJp":"電車に乗ります。","exampleRoma":"Densha ni norimasu.","exampleBn":"ট্রেনে চড়ি।"},
+{"id":167,"kanji":"降","options":["নামা","চড়া","দাঁড়ানো","বসা"],"correctOption":"নামা","reading":"お(りる) (Kun)","onyomi":"コウ (kou)","kunyomi":"お(りる)・ふ(る) (oriru/furu)","meaning":"নামা","exampleJp":"駅で降ります。","exampleRoma":"Eki de orimasu.","exampleBn":"স্টেশনে নামি।"},
+{"id":168,"kanji":"着","options":["পৌঁছানো","বের হওয়া","নামা","চড়া"],"correctOption":"পৌঁছানো","reading":"つ(く) (Kun)","onyomi":"チャク (chaku)","kunyomi":"つ(く)・き(る) (tsuku/kiru)","meaning":"পৌঁছানো","exampleJp":"駅に着きました。","exampleRoma":"Eki ni tsukimashita.","exampleBn":"স্টেশনে পৌঁছেছি।"},
+{"id":169,"kanji":"渡","options":["পার হওয়া","থামা","দাঁড়ানো","বসা"],"correctOption":"পার হওয়া","reading":"わた(る) (Kun)","onyomi":"ト (to)","kunyomi":"わた(る)・わた(す) (wataru/watasu)","meaning":"পার হওয়া","exampleJp":"橋を渡ります。","exampleRoma":"Hashi o watarimasu.","exampleBn":"সেতু পার হই।"},
+{"id":170,"kanji":"通","options":["যাতায়াত করা","থামা","দাঁড়ানো","বসা"],"correctOption":"যাতায়াত করা","reading":"とお(る) (Kun)","onyomi":"ツウ (tsuu)","kunyomi":"とお(る)・かよ(う) (tooru/kayou)","meaning":"যাতায়াত করা","exampleJp":"毎日バスで通っています。","exampleRoma":"Mainichi basu de kayotte imasu.","exampleBn":"প্রতিদিন বাসে যাতায়াত করি।"},
+{"id":171,"kanji":"走","options":["দৌড়ানো","হাঁটা","লাফানো","বসা"],"correctOption":"দৌড়ানো","reading":"はし(る) (Kun)","onyomi":"ソウ (sou)","kunyomi":"はし(る) (hashiru)","meaning":"দৌড়ানো","exampleJp":"公園を走ります。","exampleRoma":"Kouen o hashirimasu.","exampleBn":"পার্কে দৌড়াই।"},
+{"id":172,"kanji":"歩","options":["হাঁটা","দৌড়ানো","লাফানো","বসা"],"correctOption":"হাঁটা","reading":"あゆ(む) (Kun)","onyomi":"ホ・ブ (ho/bu)","kunyomi":"あゆ(む)・ある(く) (ayumu/aruku)","meaning":"হাঁটা","exampleJp":"公園を歩きます。","exampleRoma":"Kouen o arukimasu.","exampleBn":"পার্কে হাঁটি।"},
+{"id":173,"kanji":"止","options":["থামা","চলা","দৌড়ানো","হাঁটা"],"correctOption":"থামা","reading":"と(まる) (Kun)","onyomi":"シ (shi)","kunyomi":"と(まる)・と(める) (tomaru/tomeru)","meaning":"থামা","exampleJp":"ここで止まります。","exampleRoma":"Koko de tomarimasu.","exampleBn":"এখানে থামি।"},
+{"id":174,"kanji":"動","options":["নড়া","থামা","দাঁড়ানো","বসা"],"correctOption":"নড়া","reading":"うご(く) (Kun)","onyomi":"ドウ (dou)","kunyomi":"うご(く)・うご(かす) (ugoku/ugokasu)","meaning":"নড়া","exampleJp":"車が動きます。","exampleRoma":"Kuruma ga ugokimasu.","exampleBn":"গাড়ি চলে।"},
+{"id":175,"kanji":"右","options":["ডান","বাম","উপরে","নিচে"],"correctOption":"ডান","reading":"みぎ (Kun)","onyomi":"ウ・ユウ (u/yuu)","kunyomi":"みぎ (migi)","meaning":"ডান","exampleJp":"右に曲がります。","exampleRoma":"Migi ni magarimasu.","exampleBn":"ডানে ঘুরি।"},
+{"id":176,"kanji":"左","options":["বাম","ডান","উপরে","নিচে"],"correctOption":"বাম","reading":"ひだり (Kun)","onyomi":"サ (sa)","kunyomi":"ひだり (hidari)","meaning":"বাম","exampleJp":"左に曲がります。","exampleRoma":"Hidari ni magarimasu.","exampleBn":"বামে ঘুরি।"},
+{"id":177,"kanji":"東","options":["পূর্ব","পশ্চিম","উত্তর","দক্ষিণ"],"correctOption":"পূর্ব","reading":"ひがし (Kun)","onyomi":"トウ (tou)","kunyomi":"ひがし (higashi)","meaning":"পূর্ব","exampleJp":"東の空が明るいです。","exampleRoma":"Higashi no sora ga akarui desu.","exampleBn":"পূর্বের আকাশ উজ্জ্বল।"},
+{"id":178,"kanji":"西","options":["পশ্চিম","পূর্ব","উত্তর","দক্ষিণ"],"correctOption":"পশ্চিম","reading":"にし (Kun)","onyomi":"セイ・サイ (sei/sai)","kunyomi":"にし (nishi)","meaning":"পশ্চিম","exampleJp":"西の山が見えます。","exampleRoma":"Nishi no yama ga miemasu.","exampleBn":"পশ্চিমের পাহাড় দেখা যায়।"},
+{"id":179,"kanji":"北","options":["উত্তর","দক্ষিণ","পূর্ব","পশ্চিম"],"correctOption":"উত্তর","reading":"きた (Kun)","onyomi":"ホク (hoku)","kunyomi":"きた (kita)","meaning":"উত্তর","exampleJp":"北の国は寒いです。","exampleRoma":"Kita no kuni wa samui desu.","exampleBn":"উত্তরের দেশ ঠান্ডা।"},
+{"id":180,"kanji":"南","options":["দক্ষিণ","উত্তর","পূর্ব","পশ্চিম"],"correctOption":"দক্ষিণ","reading":"みなみ (Kun)","onyomi":"ナン (nan)","kunyomi":"みなみ (minami)","meaning":"দক্ষিণ","exampleJp":"南の島へ行きたいです。","exampleRoma":"Minami no shima e ikitai desu.","exampleBn":"দক্ষিণের দ্বীপে যেতে চাই।"},
+{"id":181,"kanji":"外","options":["বাইরে","ভিতরে","উপরে","নিচে"],"correctOption":"বাইরে","reading":"そと (Kun)","onyomi":"ガイ・ゲ (gai/ge)","kunyomi":"そと・ほか・はず(れる) (soto/hoka/hazureru)","meaning":"বাইরে","exampleJp":"外で遊びます。","exampleRoma":"Soto de asobimasu.","exampleBn":"বাইরে খেলি।"},
+{"id":182,"kanji":"内","options":["ভিতরে","বাইরে","উপরে","নিচে"],"correctOption":"ভিতরে","reading":"うち (Kun)","onyomi":"ナイ (nai)","kunyomi":"うち (uchi)","meaning":"ভিতরে","exampleJp":"家の内は静かです。","exampleRoma":"Ie no uchi wa shizuka desu.","exampleBn":"বাড়ির ভিতর শান্ত।"},
+{"id":183,"kanji":"部","options":["বিভাগ","সম্পূর্ণ","অংশ","টুকরা"],"correctOption":"বিভাগ","reading":"ベ (On)","onyomi":"ブ (bu)","kunyomi":"—","meaning":"বিভাগ","exampleJp":"部屋に入ります。","exampleRoma":"Heya ni hairimasu.","exampleBn":"ঘরে ঢুকি।"},
+{"id":184,"kanji":"駅","options":["স্টেশন","বিমানবন্দর","বন্দর","বাস থামা"],"correctOption":"স্টেশন","reading":"えき (Kun)","onyomi":"エキ (eki)","kunyomi":"えき (eki)","meaning":"স্টেশন","exampleJp":"駅で待ちます。","exampleRoma":"Eki de machimasu.","exampleBn":"স্টেশনে অপেক্ষা করি।"},
+{"id":185,"kanji":"社","options":["কোম্পানি","দোকান","স্কুল","বাড়ি"],"correctOption":"কোম্পানি","reading":"やしろ (Kun)","onyomi":"シャ (sha)","kunyomi":"やしろ (yashiro)","meaning":"কোম্পানি","exampleJp":"会社で働きます。","exampleRoma":"Kaisha de hatarakimasu.","exampleBn":"কোম্পানিতে কাজ করি।"},
+{"id":186,"kanji":"地","options":["জমি","আকাশ","পানি","আগুন"],"correctOption":"জমি","reading":"チ・ジ (On)","onyomi":"チ・ジ (chi/ji)","kunyomi":"—","meaning":"জমি","exampleJp":"地図を見ます。","exampleRoma":"Chizu o mimasu.","exampleBn":"মানচিত্র দেখি।"},
+{"id":187,"kanji":"鉄","options":["লোহা","সোনা","রূপা","তামা"],"correctOption":"লোহা","reading":"テツ (On)","onyomi":"テツ (tetsu)","kunyomi":"—","meaning":"লোহা","exampleJp":"地下鉄に乗ります。","exampleRoma":"Chikatetsu ni norimasu.","exampleBn":"সাবওয়েতে চড়ি।"},
+{"id":188,"kanji":"工","options":["কারিগরি","গান","ছবি","খেলা"],"correctOption":"কারিগরি","reading":"コウ (On)","onyomi":"コウ・ク (kou/ku)","kunyomi":"—","meaning":"কারিগরি","exampleJp":"工場で働きます。","exampleRoma":"Koujou de hatarakimasu.","exampleBn":"কারখানায় কাজ করি।"},
+{"id":189,"kanji":"場","options":["স্থান","সময়","বস্তু","ব্যক্তি"],"correctOption":"স্থান","reading":"ば (Kun)","onyomi":"ジョウ (jou)","kunyomi":"ば (ba)","meaning":"স্থান","exampleJp":"場所を教えてください。","exampleRoma":"Basho o oshiete kudasai.","exampleBn":"স্থান বলুন।"},
+{"id":190,"kanji":"図","options":["চিত্র","ছবি","গান","নাটক"],"correctOption":"চিত্র","reading":"ズ・ト (On)","onyomi":"ズ・ト (zu/to)","kunyomi":"はか(る) (hakaru)","meaning":"চিত্র","exampleJp":"地図を描きます。","exampleRoma":"Chizu o kakimasu.","exampleBn":"মানচিত্র আঁকি।"},
+{"id":191,"kanji":"館","options":["ভবন","বাড়ি","দোকান","অফিস"],"correctOption":"ভবন","reading":"カン (On)","onyomi":"カン (kan)","kunyomi":"—","meaning":"ভবন","exampleJp":"図書館へ行きます。","exampleRoma":"Toshokan e ikimasu.","exampleBn":"লাইব্রেরিতে যাই।"},
+{"id":192,"kanji":"公","options":["সরকারি","ব্যক্তিগত","গোপন","বিশেষ"],"correctOption":"সরকারি","reading":"おおやけ (Kun)","onyomi":"コウ (kou)","kunyomi":"おおやけ (ooyake)","meaning":"সরকারি","exampleJp":"公園を散歩します。","exampleRoma":"Kouen o sanpo shimasu.","exampleBn":"পার্কে হাঁটাহাঁটি করি।"},
+{"id":193,"kanji":"園","options":["বাগান","ঘর","দোকান","পথ"],"correctOption":"বাগান","reading":"その (Kun)","onyomi":"エン (en)","kunyomi":"その (sono)","meaning":"বাগান","exampleJp":"公園で遊びます。","exampleRoma":"Kouen de asobimasu.","exampleBn":"পার্কে খেলি।"},
+{"id":194,"kanji":"号","options":["নম্বর","নাম","রং","আকার"],"correctOption":"নম্বর","reading":"ゴウ (On)","onyomi":"ゴウ (gou)","kunyomi":"—","meaning":"নম্বর","exampleJp":"電話番号を教えてください。","exampleRoma":"Denwa bangou o oshiete kudasai.","exampleBn":"ফোন নম্বর বলুন।"},
+{"id":195,"kanji":"市","options":["শহর","গ্রাম","দ্বীপ","পাহাড়"],"correctOption":"শহর","reading":"いち (Kun)","onyomi":"シ (shi)","kunyomi":"いち (ichi)","meaning":"শহর","exampleJp":"市役所へ行きます。","exampleRoma":"Shiyakusho e ikimasu.","exampleBn":"সিটি অফিসে যাই।"},
+{"id":196,"kanji":"町","options":["শহর","গ্রাম","দ্বীপ","পাহাড়"],"correctOption":"শহর","reading":"まち (Kun)","onyomi":"チョウ (chou)","kunyomi":"まち (machi)","meaning":"শহর","exampleJp":"町を歩きます。","exampleRoma":"Machi o arukimasu.","exampleBn":"শহরে হাঁটি।"},
+{"id":197,"kanji":"村","options":["গ্রাম","শহর","দ্বীপ","পাহাড়"],"correctOption":"গ্রাম","reading":"むら (Kun)","onyomi":"ソン (son)","kunyomi":"むら (mura)","meaning":"গ্রাম","exampleJp":"村に住んでいます。","exampleRoma":"Mura ni sunde imasu.","exampleBn":"গ্রামে থাকি।"},
+{"id":198,"kanji":"区","options":["ওয়ার্ড","শহর","গ্রাম","দ্বীপ"],"correctOption":"ওয়ার্ড","reading":"ク (On)","onyomi":"ク (ku)","kunyomi":"—","meaning":"ওয়ার্ড","exampleJp":"区役所へ行きます。","exampleRoma":"Kuyakusho e ikimasu.","exampleBn":"ওয়ার্ড অফিসে যাই।"},
+{"id":199,"kanji":"都","options":["রাজধানী","শহর","গ্রাম","দ্বীপ"],"correctOption":"রাজধানী","reading":"みやこ (Kun)","onyomi":"ト (to)","kunyomi":"みやこ (miyako)","meaning":"রাজধানী","exampleJp":"東京都に住んでいます。","exampleRoma":"Toukyouto ni sunde imasu.","exampleBn":"টোকিওতে থাকি।"},
+{"id":200,"kanji":"府","options":["প্রশাসনিক অঞ্চল","শহর","গ্রাম","দ্বীপ"],"correctOption":"প্রশাসনিক অঞ্চল","reading":"フ (On)","onyomi":"フ (fu)","kunyomi":"—","meaning":"প্রশাসনিক অঞ্চল","exampleJp":"大阪府に住んでいます。","exampleRoma":"Oosakafu ni sunde imasu.","exampleBn":"ওসাকা প্রশাসনিক অঞ্চলে থাকি।"},
+{"id":201,"kanji":"県","options":["প্রিফেকচার","শহর","গ্রাম","দ্বীপ"],"correctOption":"প্রিফেকচার","reading":"ケン (On)","onyomi":"ケン (ken)","kunyomi":"—","meaning":"প্রিফেকচার","exampleJp":"茨城県に住んでいます。","exampleRoma":"Ibarakiken ni sunde imasu.","exampleBn":"ইবারাকি প্রিফেকচারে থাকি।"},
+{"id":202,"kanji":"島","options":["দ্বীপ","মহাদেশ","উপদ্বীপ","সৈকত"],"correctOption":"দ্বীপ","reading":"しま (Kun)","onyomi":"トウ (tou)","kunyomi":"しま (shima)","meaning":"দ্বীপ","exampleJp":"島へ行きます。","exampleRoma":"Shima e ikimasu.","exampleBn":"দ্বীপে যাই।"},
+{"id":203,"kanji":"京","options":["রাজধানী","শহর","গ্রাম","দ্বীপ"],"correctOption":"রাজধানী","reading":"キョウ・ケイ (On)","onyomi":"キョウ・ケイ (kyou/kei)","kunyomi":"—","meaning":"রাজধানী","exampleJp":"京都へ行きます。","exampleRoma":"Kyouto e ikimasu.","exampleBn":"কিওটোতে যাই।"},
+{"id":204,"kanji":"様","options":["জনাব/জনাবা","শিক্ষক","ছাত্র","বন্ধু"],"correctOption":"জনাব/জনাবা","reading":"さま (Kun)","onyomi":"ヨウ (you)","kunyomi":"さま (sama)","meaning":"জনাব/জনাবা","exampleJp":"田中様に会います。","exampleRoma":"Tanaka sama ni aimasu.","exampleBn":"জনাব তানাকার সাথে দেখা করি।"},
+{"id":205,"kanji":"練","options":["অনুশীলন","পড়া","খেলা","ঘুম"],"correctOption":"অনুশীলন","reading":"ね(る) (Kun)","onyomi":"レン (ren)","kunyomi":"ね(る) (neru)","meaning":"অনুশীলন","exampleJp":"毎日漢字を練習します。","exampleRoma":"Mainichi kanji o renshuu shimasu.","exampleBn":"প্রতিদিন কাঞ্জি অনুশীলন করি।"},
+{"id":206,"kanji":"習","options":["শেখা","শেখানো","পড়া","লেখা"],"correctOption":"শেখা","reading":"なら(う) (Kun)","onyomi":"シュウ (shuu)","kunyomi":"なら(う) (narau)","meaning":"শেখা","exampleJp":"日本語を習います。","exampleRoma":"Nihongo o naraimasu.","exampleBn":"জাপানি ভাষা শিখি।"},
+{"id":207,"kanji":"勉","options":["পরিশ্রম","আলস্য","বিশ্রাম","খেলা"],"correctOption":"পরিশ্রম","reading":"ベン (On)","onyomi":"ベン (ben)","kunyomi":"—","meaning":"পরিশ্রম","exampleJp":"毎日勉強します。","exampleRoma":"Mainichi benkyou shimasu.","exampleBn":"প্রতিদিন পড়াশোনা করি।"},
+{"id":208,"kanji":"強","options":["শক্তিশালী","দুর্বল","ছোট","বড়"],"correctOption":"শক্তিশালী","reading":"つよ(い) (Kun)","onyomi":"キョウ (kyou)","kunyomi":"つよ(い) (tsuyoi)","meaning":"শক্তিশালী","exampleJp":"彼は強いです。","exampleRoma":"Kare wa tsuyoi desu.","exampleBn":"সে শক্তিশালী।"},
+{"id":209,"kanji":"研","options":["গবেষণা","পড়া","খেলা","দেখা"],"correctOption":"গবেষণা","reading":"ケン (On)","onyomi":"ケン (ken)","kunyomi":"—","meaning":"গবেষণা","exampleJp":"大学で研究します。","exampleRoma":"Daigaku de kenkyuu shimasu.","exampleBn":"বিশ্ববিদ্যালয়ে গবেষণা করি।"},
+{"id":210,"kanji":"究","options":["অনুসন্ধান","পড়া","খেলা","দেখা"],"correctOption":"অনুসন্ধান","reading":"キュウ (On)","onyomi":"キュウ (kyuu)","kunyomi":"きわ(める) (kiwameru)","meaning":"অনুসন্ধান","exampleJp":"研究を続けます。","exampleRoma":"Kenkyuu o tsuzukemasu.","exampleBn":"গবেষণা চালিয়ে যাই।"},
+{"id":211,"kanji":"留","options":["থাকা","যাওয়া","আসা","ফিরা"],"correctOption":"থাকা","reading":"と(まる) (Kun)","onyomi":"リュウ (ryuu)","kunyomi":"と(まる)・と(める) (tomaru/tomeru)","meaning":"থাকা","exampleJp":"留学します。","exampleRoma":"Ryuugaku shimasu.","exampleBn":"বিদেশে পড়তে যাই।"},
+{"id":212,"kanji":"質","options":["গুণমান","পরিমাণ","আকার","রং"],"correctOption":"গুণমান","reading":"シツ (On)","onyomi":"シツ (shitsu)","kunyomi":"—","meaning":"গুণমান","exampleJp":"質がいいです。","exampleRoma":"Shitsu ga ii desu.","exampleBn":"গুণমান ভালো।"},
+{"id":213,"kanji":"問","options":["প্রশ্ন","উত্তর","বলা","শোনা"],"correctOption":"প্রশ্ন","reading":"と(う) (Kun)","onyomi":"モン (mon)","kunyomi":"と(う)・とい (tou/toi)","meaning":"প্রশ্ন","exampleJp":"質問があります。","exampleRoma":"Shitsumon ga arimasu.","exampleBn":"প্রশ্ন আছে।"},
+{"id":214,"kanji":"題","options":["বিষয়","প্রশ্ন","উত্তর","শব্দ"],"correctOption":"বিষয়","reading":"ダイ (On)","onyomi":"ダイ (dai)","kunyomi":"—","meaning":"বিষয়","exampleJp":"問題を解きます。","exampleRoma":"Mondai o tokimasu.","exampleBn":"সমস্যা সমাধান করি।"},
+{"id":215,"kanji":"答","options":["উত্তর","প্রশ্ন","বলা","শোনা"],"correctOption":"উত্তর","reading":"こた(える) (Kun)","onyomi":"トウ (tou)","kunyomi":"こた(える) (kotaeru)","meaning":"উত্তর","exampleJp":"質問に答えます。","exampleRoma":"Shitsumon ni kotaemasu.","exampleBn":"প্রশ্নের উত্তর দিই।"},
+{"id":216,"kanji":"宿","options":["বাসস্থান","স্কুল","দোকান","অফিস"],"correctOption":"বাসস্থান","reading":"やど (Kun)","onyomi":"シュク (shuku)","kunyomi":"やど (yado)","meaning":"বাসস্থান","exampleJp":"宿題をします。","exampleRoma":"Shukudai o shimasu.","exampleBn":"হোমওয়ার্ক করি।"},
+{"id":217,"kanji":"政","options":["রাজনীতি","অর্থনীতি","শিক্ষা","সংস্কৃতি"],"correctOption":"রাজনীতি","reading":"セイ (On)","onyomi":"セイ (sei)","kunyomi":"まつりごと (matsurigoto)","meaning":"রাজনীতি","exampleJp":"政治を勉強します。","exampleRoma":"Seiji o benkyou shimasu.","exampleBn":"রাজনীতি পড়ি।"},
+{"id":218,"kanji":"治","options":["শাসন করা","পড়া","লেখা","খাওয়া"],"correctOption":"শাসন করা","reading":"おさ(める) (Kun)","onyomi":"チ・ジ (chi/ji)","kunyomi":"おさ(める)・なお(る) (osameru/naoru)","meaning":"শাসন করা","exampleJp":"政治をします。","exampleRoma":"Seiji o shimasu.","exampleBn":"রাজনীতি করি।"},
+{"id":219,"kanji":"経","options":["অতিবাহিত হওয়া","থামা","শুরু","শেষ"],"correctOption":"অতিবাহিত হওয়া","reading":"へ(る) (Kun)","onyomi":"ケイ (kei)","kunyomi":"へ(る) (heru)","meaning":"অতিবাহিত হওয়া","exampleJp":"経済を勉強します。","exampleRoma":"Keizai o benkyou shimasu.","exampleBn":"অর্থনীতি পড়ি।"},
+{"id":220,"kanji":"済","options":["শেষ হওয়া","শুরু","থামা","চলা"],"correctOption":"শেষ হওয়া","reading":"す(む) (Kun)","onyomi":"サイ (sai)","kunyomi":"す(む)・す(ます) (sumu/sumasu)","meaning":"শেষ হওয়া","exampleJp":"経済学を学びます。","exampleRoma":"Keizaigaku o manabimasu.","exampleBn":"অর্থনীতি শিখি।"},
+{"id":221,"kanji":"歴","options":["ইতিহাস","ভবিষ্যৎ","বর্তমান","সময়"],"correctOption":"ইতিহাস","reading":"レキ (On)","onyomi":"レキ (reki)","kunyomi":"—","meaning":"ইতিহাস","exampleJp":"歴史を勉強します。","exampleRoma":"Rekishi o benkyou shimasu.","exampleBn":"ইতিহাস পড়ি।"},
+{"id":222,"kanji":"史","options":["ইতিহাস","ভবিষ্যৎ","বর্তমান","সময়"],"correctOption":"ইতিহাস","reading":"シ (On)","onyomi":"シ (shi)","kunyomi":"—","meaning":"ইতিহাস","exampleJp":"日本史を学びます。","exampleRoma":"Nihonshi o manabimasu.","exampleBn":"জাপানের ইতিহাস শিখি।"},
+{"id":223,"kanji":"育","options":["লালনপালন","শিক্ষা","খেলা","ঘুম"],"correctOption":"লালনপালন","reading":"そだ(てる) (Kun)","onyomi":"イク (iku)","kunyomi":"そだ(てる)・そだ(つ) (sodateru/sodatsu)","meaning":"লালনপালন","exampleJp":"子どもを育てます。","exampleRoma":"Kodomo o sodatemasu.","exampleBn":"শিশু লালনপালন করি।"},
+{"id":224,"kanji":"化","options":["পরিবর্তন","স্থিরতা","শুরু","শেষ"],"correctOption":"পরিবর্তন","reading":"ば(ける) (Kun)","onyomi":"カ (ka)","kunyomi":"ば(ける) (bakeru)","meaning":"পরিবর্তন","exampleJp":"文化を学びます。","exampleRoma":"Bunka o manabimasu.","exampleBn":"সংস্কৃতি শিখি।"},
+{"id":225,"kanji":"理","options":["যুক্তি","অযৌক্তিকতা","বিশৃঙ্খলা","শব্দ"],"correctOption":"যুক্তি","reading":"リ (On)","onyomi":"リ (ri)","kunyomi":"—","meaning":"যুক্তি","exampleJp":"理由を説明します。","exampleRoma":"Riyuu o setsumei shimasu.","exampleBn":"কারণ ব্যাখ্যা করি।"},
+{"id":226,"kanji":"科","options":["বিভাগ","সম্পূর্ণ","অংশ","টুকরা"],"correctOption":"বিভাগ","reading":"カ (On)","onyomi":"カ (ka)","kunyomi":"—","meaning":"বিভাগ","exampleJp":"科学を勉強します。","exampleRoma":"Kagaku o benkyou shimasu.","exampleBn":"বিজ্ঞান পড়ি।"},
+{"id":227,"kanji":"数","options":["সংখ্যা","আকার","রং","নাম"],"correctOption":"সংখ্যা","reading":"かず (Kun)","onyomi":"スウ (suu)","kunyomi":"かず・かぞ(える) (kazu/kazoeru)","meaning":"সংখ্যা","exampleJp":"数を数えます。","exampleRoma":"Kazu o kazoemasu.","exampleBn":"সংখ্যা গণনা করি।"},
+{"id":228,"kanji":"医","options":["চিকিৎসা","শিক্ষা","রাজনীতি","অর্থনীতি"],"correctOption":"চিকিৎসা","reading":"イ (On)","onyomi":"イ (i)","kunyomi":"—","meaning":"চিকিৎসা","exampleJp":"医学を学びます。","exampleRoma":"Igaku o manabimasu.","exampleBn":"চিকিৎসাবিদ্যা শিখি।"},
+{"id":229,"kanji":"映","options":["প্রতিফলিত হওয়া","দেখা","শোনা","বলা"],"correctOption":"প্রতিফলিত হওয়া","reading":"うつ(る) (Kun)","onyomi":"エイ (ei)","kunyomi":"うつ(る)・うつ(す) (utsuru/utsusu)","meaning":"প্রতিফলিত হওয়া","exampleJp":"映画を見ます。","exampleRoma":"Eiga o mimasu.","exampleBn":"সিনেমা দেখি।"},
+{"id":230,"kanji":"画","options":["ছবি","গান","নাটক","কবিতা"],"correctOption":"ছবি","reading":"ガ・カク (On)","onyomi":"ガ・カク (ga/kaku)","kunyomi":"—","meaning":"ছবি","exampleJp":"映画を見ます。","exampleRoma":"Eiga o mimasu.","exampleBn":"সিনেমা দেখি।"},
+{"id":231,"kanji":"写","options":["কপি করা","মুছে ফেলা","ছিঁড়া","ভাঙা"],"correctOption":"কপি করা","reading":"うつ(す) (Kun)","onyomi":"シャ (sha)","kunyomi":"うつ(す) (utsusu)","meaning":"কপি করা","exampleJp":"写真を撮ります。","exampleRoma":"Shashin o torimasu.","exampleBn":"ছবি তুলি।"},
+{"id":232,"kanji":"真","options":["সত্য","মিথ্যা","ভুল","সন্দেহ"],"correctOption":"সত্য","reading":"ま (Kun)","onyomi":"シン (shin)","kunyomi":"ま・まっ (ma/mak-)","meaning":"সত্য","exampleJp":"真実を話します。","exampleRoma":"Shinjitsu o hanashimasu.","exampleBn":"সত্য কথা বলি।"},
+{"id":233,"kanji":"音","options":["শব্দ","আলো","রং","গন্ধ"],"correctOption":"শব্দ","reading":"おと (Kun)","onyomi":"オン (on)","kunyomi":"おと (oto)","meaning":"শব্দ","exampleJp":"音が聞こえます。","exampleRoma":"Oto ga kikoemasu.","exampleBn":"শব্দ শোনা যায়।"},
+{"id":234,"kanji":"楽","options":["আনন্দ","দুঃখ","রাগ","ভয়"],"correctOption":"আনন্দ","reading":"たの(しい) (Kun)","onyomi":"ガク・ラク (gaku/raku)","kunyomi":"たの(しい) (tanoshii)","meaning":"আনন্দ","exampleJp":"音楽を聞くのが楽しいです。","exampleRoma":"Ongaku o kiku no ga tanoshii desu.","exampleBn":"গান শুনতে আনন্দ লাগে।"},
+{"id":235,"kanji":"料","options":["উপাদান","ফল","সবজি","মাংস"],"correctOption":"উপাদান","reading":"リョウ (On)","onyomi":"リョウ (ryou)","kunyomi":"—","meaning":"উপাদান","exampleJp":"料理を作ります。","exampleRoma":"Ryouri o tsukurimasu.","exampleBn":"রান্না করি।"},
+{"id":236,"kanji":"組","options":["দল","ব্যক্তি","একক","গোষ্ঠী"],"correctOption":"দল","reading":"く(む) (Kun)","onyomi":"ソ (so)","kunyomi":"く(む)・くみ (kumu/kumi)","meaning":"দল","exampleJp":"グループを作ります。","exampleRoma":"Guruupu o tsukurimasu.","exampleBn":"দল তৈরি করি।"},
+{"id":237,"kanji":"思","options":["ভাবা","দেখা","শোনা","বলা"],"correctOption":"ভাবা","reading":"おも(う) (Kun)","onyomi":"シ (shi)","kunyomi":"おも(う) (omou)","meaning":"ভাবা","exampleJp":"家に帰りたいと思います。","exampleRoma":"Ie ni kaeritai to omoimasu.","exampleBn":"বাড়ি ফিরতে চাই বলে মনে করি।"},
+{"id":238,"kanji":"色","options":["রঙ","আকার","গন্ধ","স্বাদ"],"correctOption":"রঙ","reading":"いろ (Kun)","onyomi":"ショク・シキ (shoku/shiki)","kunyomi":"いろ (iro)","meaning":"রঙ","exampleJp":"好きな色は青です。","exampleRoma":"Sukina iro wa ao desu.","exampleBn":"প্রিয় রঙ নীল।"},
+{"id":239,"kanji":"白","options":["সাদা","কালো","লাল","নীল"],"correctOption":"সাদা","reading":"しろ (Kun)","onyomi":"ハク・ビャク (haku/byaku)","kunyomi":"しろ・しろ(い) (shiro/shiroi)","meaning":"সাদা","exampleJp":"白い雪が降っています。","exampleRoma":"Shiroi yuki ga futte imasu.","exampleBn":"সাদা বরফ পড়ছে।"},
+{"id":240,"kanji":"起","options":["ঘুম থেকে ওঠা","ঘুমানো","বসা","দাঁড়ানো"],"correctOption":"ঘুম থেকে ওঠা","reading":"お(きる) (Kun)","onyomi":"キ (ki)","kunyomi":"お(きる)・お(こる)・お(こす) (okiru/okoru/okosu)","meaning":"ঘুম থেকে ওঠা","exampleJp":"毎朝六時に起きます。","exampleRoma":"Maiasa rokuji ni okimasu.","exampleBn":"প্রতিদিন সকাল ছয়টায় উঠি।"},
+{"id":241,"kanji":"寝","options":["ঘুমানো","জাগা","বসা","দাঁড়ানো"],"correctOption":"ঘুমানো","reading":"ね(る) (Kun)","onyomi":"シン (shin)","kunyomi":"ね(る) (neru)","meaning":"ঘুমানো","exampleJp":"十一時に寝ます。","exampleRoma":"Juuyichiji ni nemasu.","exampleBn":"এগারোটায় ঘুমাই।"},
+{"id":242,"kanji":"遊","options":["খেলা","পড়া","কাজ","ঘুম"],"correctOption":"খেলা","reading":"あそ(ぶ) (Kun)","onyomi":"ユウ (yuu)","kunyomi":"あそ(ぶ) (asobu)","meaning":"খেলা","exampleJp":"公園で遊びます。","exampleRoma":"Kouen de asobimasu.","exampleBn":"পার্কে খেলি।"},
+{"id":243,"kanji":"立","options":["দাঁড়ানো","বসা","শোয়া","হাঁটা"],"correctOption":"দাঁড়ানো","reading":"た(つ) (Kun)","onyomi":"リツ (ritsu)","kunyomi":"た(つ)・た(てる) (tatsu/tateru)","meaning":"দাঁড়ানো","exampleJp":"立ってください。","exampleRoma":"Tatte kudasai.","exampleBn":"দাঁড়ান।"},
+{"id":244,"kanji":"座","options":["বসা","দাঁড়ানো","শোয়া","হাঁটা"],"correctOption":"বসা","reading":"すわ(る) (Kun)","onyomi":"ザ (za)","kunyomi":"すわ(る) (suwaru)","meaning":"বসা","exampleJp":"椅子に座ります。","exampleRoma":"Isu ni suwarimasu.","exampleBn":"চেয়ারে বসি।"},
+{"id":245,"kanji":"使","options":["ব্যবহার করা","ফেলে দেওয়া","ভাঙা","তৈরি করা"],"correctOption":"ব্যবহার করা","reading":"つか(う) (Kun)","onyomi":"シ (shi)","kunyomi":"つか(う) (tsukau)","meaning":"ব্যবহার করা","exampleJp":"パソコンを使います。","exampleRoma":"Pasokon o tsukaimasu.","exampleBn":"কম্পিউটার ব্যবহার করি।"},
+{"id":246,"kanji":"始","options":["শুরু করা","শেষ করা","থামা","চলা"],"correctOption":"শুরু করা","reading":"はじ(まる) (Kun)","onyomi":"シ (shi)","kunyomi":"はじ(まる)・はじ(める) (hajimaru/hajimeru)","meaning":"শুরু করা","exampleJp":"授業が始まります。","exampleRoma":"Jugyou ga hajimarimasu.","exampleBn":"ক্লাস শুরু হয়।"},
+{"id":247,"kanji":"終","options":["শেষ করা","শুরু করা","থামা","চলা"],"correctOption":"শেষ করা","reading":"お(わる) (Kun)","onyomi":"シュウ (shuu)","kunyomi":"お(わる)・お(える) (owaru/oeru)","meaning":"শেষ করা","exampleJp":"授業が終わりました。","exampleRoma":"Jugyou ga owarimashita.","exampleBn":"ক্লাস শেষ হয়েছে।"},
+{"id":248,"kanji":"貸","options":["ধার দেওয়া","ধার নেওয়া","ফেরত দেওয়া","ভাঙা"],"correctOption":"ধার দেওয়া","reading":"か(す) (Kun)","onyomi":"タイ (tai)","kunyomi":"か(す) (kasu)","meaning":"ধার দেওয়া","exampleJp":"本を貸します。","exampleRoma":"Hon o kashimasu.","exampleBn":"বই ধার দিই।"},
+{"id":249,"kanji":"借","options":["ধার নেওয়া","ধার দেওয়া","ফেরত দেওয়া","ভাঙা"],"correctOption":"ধার নেওয়া","reading":"か(りる) (Kun)","onyomi":"シャク (shaku)","kunyomi":"か(りる) (kariru)","meaning":"ধার নেওয়া","exampleJp":"本を借ります。","exampleRoma":"Hon o karimasu.","exampleBn":"বই ধার নিই।"},
+{"id":250,"kanji":"返","options":["ফেরত দেওয়া","ধার নেওয়া","ধার দেওয়া","ভাঙা"],"correctOption":"ফেরত দেওয়া","reading":"かえ(す) (Kun)","onyomi":"ヘン (hen)","kunyomi":"かえ(す)・かえ(る) (kaesu/kaeru)","meaning":"ফেরত দেওয়া","exampleJp":"本を返します。","exampleRoma":"Hon o kaeshimasu.","exampleBn":"বই ফেরত দিই।"},
+{"id":251,"kanji":"結","options":["সংযুক্ত করা","বিচ্ছিন্ন করা","ভাঙা","ছিঁড়া"],"correctOption":"সংযুক্ত করা","reading":"むす(ぶ) (Kun)","onyomi":"ケツ (ketsu)","kunyomi":"むす(ぶ) (musubu)","meaning":"সংযুক্ত করা","exampleJp":"結婚します。","exampleRoma":"Kekkon shimasu.","exampleBn":"বিয়ে করি।"},
+{"id":252,"kanji":"婚","options":["বিবাহ","জন্ম","মৃত্যু","শিক্ষা"],"correctOption":"বিবাহ","reading":"コン (On)","onyomi":"コン (kon)","kunyomi":"—","meaning":"বিবাহ","exampleJp":"結婚式を挙げます。","exampleRoma":"Kekkonshiki o agemasu.","exampleBn":"বিয়ের অনুষ্ঠান করি।"},
+{"id":253,"kanji":"離","options":["বিচ্ছিন্ন হওয়া","সংযুক্ত হওয়া","একত্র হওয়া","মিলিত হওয়া"],"correctOption":"বিচ্ছিন্ন হওয়া","reading":"はな(れる) (Kun)","onyomi":"リ (ri)","kunyomi":"はな(れる)・はな(す) (hanareru/hanasu)","meaning":"বিচ্ছিন্ন হওয়া","exampleJp":"離婚しました。","exampleRoma":"Rikon shimashita.","exampleBn":"বিবাহবিচ্ছেদ হয়েছে।"},
+{"id":254,"kanji":"席","options":["আসন","দাঁড়ানো","শোয়া","হাঁটা"],"correctOption":"আসন","reading":"セキ (On)","onyomi":"セキ (seki)","kunyomi":"—","meaning":"আসন","exampleJp":"席に座ります。","exampleRoma":"Seki ni suwarimasu.","exampleBn":"আসনে বসি।"},
+{"id":255,"kanji":"欠","options":["অনুপস্থিত থাকা","উপস্থিত থাকা","বসা","দাঁড়ানো"],"correctOption":"অনুপস্থিত থাকা","reading":"か(ける) (Kun)","onyomi":"ケツ (ketsu)","kunyomi":"か(ける)・か(く) (kakeru/kaku)","meaning":"অনুপস্থিত থাকা","exampleJp":"授業を欠席します。","exampleRoma":"Jugyou o kesseki shimasu.","exampleBn":"ক্লাসে অনুপস্থিত থাকি।"},
+{"id":256,"kanji":"予","options":["আগাম","পরে","এখন","সবসময়"],"correctOption":"আগাম","reading":"ヨ (On)","onyomi":"ヨ (yo)","kunyomi":"—","meaning":"আগাম","exampleJp":"予定を立てます。","exampleRoma":"Yotei o tatemasu.","exampleBn":"পরিকল্পনা করি।"},
+{"id":257,"kanji":"定","options":["নির্ধারণ করা","পরিবর্তন করা","ভাঙা","ছিঁড়া"],"correctOption":"নির্ধারণ করা","reading":"さだ(める) (Kun)","onyomi":"テイ・ジョウ (tei/jou)","kunyomi":"さだ(める)・さだ(まる) (sadameru/sadamaru)","meaning":"নির্ধারণ করা","exampleJp":"時間を定めます。","exampleRoma":"Jikan o sadamemasu.","exampleBn":"সময় নির্ধারণ করি।"},
+{"id":258,"kanji":"洋","options":["পশ্চিমা","প্রাচ্য","উত্তর","দক্ষিণ"],"correctOption":"পশ্চিমা","reading":"ヨウ (On)","onyomi":"ヨウ (you)","kunyomi":"—","meaning":"পশ্চিমা","exampleJp":"洋服を着ます。","exampleRoma":"Youfuku o kimasu.","exampleBn":"পশ্চিমা পোশাক পরি।"},
+{"id":259,"kanji":"式","options":["অনুষ্ঠান","দৈনন্দিন","সাধারণ","বিশেষ"],"correctOption":"অনুষ্ঠান","reading":"シキ (On)","onyomi":"シキ (shiki)","kunyomi":"—","meaning":"অনুষ্ঠান","exampleJp":"結婚式をします。","exampleRoma":"Kekkonshiki o shimasu.","exampleBn":"বিয়ের অনুষ্ঠান করি।"},
+{"id":260,"kanji":"和","options":["শান্তি","যুদ্ধ","বিবাদ","দুঃখ"],"correctOption":"শান্তি","reading":"ワ (On)","onyomi":"ワ (wa)","kunyomi":"なご(む) (nagomu)","meaning":"শান্তি","exampleJp":"平和が大切です。","exampleRoma":"Heiwa ga taisetsu desu.","exampleBn":"শান্তি গুরুত্বপূর্ণ।"},
+{"id":261,"kanji":"活","options":["জীবন","মৃত্যু","ঘুম","বিশ্রাম"],"correctOption":"জীবন","reading":"カツ (On)","onyomi":"カツ (katsu)","kunyomi":"い(きる) (ikiru)","meaning":"জীবন","exampleJp":"生活が楽しくなりました。","exampleRoma":"Seikatsu ga tanoshiku narimashita.","exampleBn":"জীবন আনন্দময় হয়েছে।"},
+{"id":262,"kanji":"春","options":["বসন্ত","গ্রীষ্ম","শরৎ","শীত"],"correctOption":"বসন্ত","reading":"はる (Kun)","onyomi":"シュン (shun)","kunyomi":"はる (haru)","meaning":"বসন্ত","exampleJp":"春に花が咲きます。","exampleRoma":"Haru ni hana ga sakimasu.","exampleBn":"বসন্তে ফুল ফোটে।"},
+{"id":263,"kanji":"夏","options":["গ্রীষ্ম","বসন্ত","শরৎ","শীত"],"correctOption":"গ্রীষ্ম","reading":"なつ (Kun)","onyomi":"カ (ka)","kunyomi":"なつ (natsu)","meaning":"গ্রীষ্ম","exampleJp":"夏は暑いです。","exampleRoma":"Natsu wa atsui desu.","exampleBn":"গ্রীষ্ম গরম।"},
+{"id":264,"kanji":"秋","options":["শরৎ","বসন্ত","গ্রীষ্ম","শীত"],"correctOption":"শরৎ","reading":"あき (Kun)","onyomi":"シュウ (shuu)","kunyomi":"あき (aki)","meaning":"শরৎ","exampleJp":"秋は涼しいです。","exampleRoma":"Aki wa suzushii desu.","exampleBn":"শরৎ ঠান্ডা।"},
+{"id":265,"kanji":"冬","options":["শীত","বসন্ত","গ্রীষ্ম","শরৎ"],"correctOption":"শীত","reading":"ふゆ (Kun)","onyomi":"トウ (tou)","kunyomi":"ふゆ (fuyu)","meaning":"শীত","exampleJp":"冬は雪が降ります。","exampleRoma":"Fuyu wa yuki ga furimasu.","exampleBn":"শীতে বরফ পড়ে।"},
+{"id":266,"kanji":"暑","options":["গরম (আবহাওয়া)","ঠান্ডা","বসন্ত","শরৎ"],"correctOption":"গরম (আবহাওয়া)","reading":"あつ(い) (Kun)","onyomi":"ショ (sho)","kunyomi":"あつ(い) (atsui)","meaning":"গরম (আবহাওয়া)","exampleJp":"今日は暑いです。","exampleRoma":"Kyou wa atsui desu.","exampleBn":"আজ গরম।"},
+{"id":267,"kanji":"熱","options":["গরম (বস্তু)","ঠান্ডা","বসন্ত","শরৎ"],"correctOption":"গরম (বস্তু)","reading":"あつ(い) (Kun)","onyomi":"ネツ (netsu)","kunyomi":"あつ(い) (atsui)","meaning":"গরম (বস্তু)","exampleJp":"お茶が熱いです。","exampleRoma":"Ocha ga atsui desu.","exampleBn":"চা গরম।"},
+{"id":268,"kanji":"寒","options":["ঠান্ডা (আবহাওয়া)","গরম","বসন্ত","শরৎ"],"correctOption":"ঠান্ডা (আবহাওয়া)","reading":"さむ(い) (Kun)","onyomi":"カン (kan)","kunyomi":"さむ(い) (samui)","meaning":"ঠান্ডা (আবহাওয়া)","exampleJp":"冬は寒いです。","exampleRoma":"Fuyu wa samui desu.","exampleBn":"শীতে ঠান্ডা।"},
+{"id":269,"kanji":"冷","options":["ঠান্ডা (বস্তু)","গরম","বসন্ত","শরৎ"],"correctOption":"ঠান্ডা (বস্তু)","reading":"つめ(たい) (Kun)","onyomi":"レイ (rei)","kunyomi":"つめ(たい)・ひ(える)・ひ(やす) (tsumetai/hieru/hiyasu)","meaning":"ঠান্ডা (বস্তু)","exampleJp":"水が冷たいです。","exampleRoma":"Mizu ga tsumetai desu.","exampleBn":"পানি ঠান্ডা।"},
+{"id":270,"kanji":"暖","options":["উষ্ণ (আবহাওয়া)","ঠান্ডা","গরম","শীতল"],"correctOption":"উষ্ণ (আবহাওয়া)","reading":"あたた(かい) (Kun)","onyomi":"ダン (dan)","kunyomi":"あたた(かい) (atatakai)","meaning":"উষ্ণ (আবহাওয়া)","exampleJp":"暖かい日です。","exampleRoma":"Atatakai hi desu.","exampleBn":"উষ্ণ দিন।"},
+{"id":271,"kanji":"温","options":["উষ্ণ (বস্তু)","ঠান্ডা","গরম","শীতল"],"correctOption":"উষ্ণ (বস্তু)","reading":"あたた(かい) (Kun)","onyomi":"オン (on)","kunyomi":"あたた(かい)・あたた(まる)・あたた(める) (atatakai/atatamaru/atatameru)","meaning":"উষ্ণ (বস্তু)","exampleJp":"温泉に入りたいです。","exampleRoma":"Onsen ni hairitai desu.","exampleBn":"অনসেনে গোসল করতে চাই।"},
+{"id":272,"kanji":"涼","options":["শীতল","উষ্ণ","গরম","ঠান্ডা"],"correctOption":"শীতল","reading":"すず(しい) (Kun)","onyomi":"リョウ (ryou)","kunyomi":"すず(しい) (suzushii)","meaning":"শীতল","exampleJp":"秋は涼しいです。","exampleRoma":"Aki wa suzushii desu.","exampleBn":"শরৎ শীতল।"},
+{"id":273,"kanji":"仕","options":["কাজ করা","বিশ্রাম","খেলা","ঘুম"],"correctOption":"কাজ করা","reading":"つか(える) (Kun)","onyomi":"シ (shi)","kunyomi":"つか(える) (tsukaeru)","meaning":"কাজ করা","exampleJp":"仕事をします。","exampleRoma":"Shigoto o shimasu.","exampleBn":"কাজ করি।"},
+{"id":274,"kanji":"事","options":["বিষয়","ব্যক্তি","স্থান","সময়"],"correctOption":"বিষয়","reading":"こと (Kun)","onyomi":"ジ (ji)","kunyomi":"こと (koto)","meaning":"বিষয়","exampleJp":"大事なことです。","exampleRoma":"Daiji na koto desu.","exampleBn":"গুরুত্বপূর্ণ বিষয়।"},
+{"id":275,"kanji":"者","options":["ব্যক্তি","বস্তু","স্থান","সময়"],"correctOption":"ব্যক্তি","reading":"もの (Kun)","onyomi":"シャ (sha)","kunyomi":"もの (mono)","meaning":"ব্যক্তি","exampleJp":"医者になりたいです。","exampleRoma":"Isha ni naritai desu.","exampleBn":"ডাক্তার হতে চাই।"},
+{"id":276,"kanji":"運","options":["পরিবহন","থামা","চলা","উড়া"],"correctOption":"পরিবহন","reading":"はこ(ぶ) (Kun)","onyomi":"ウン (un)","kunyomi":"はこ(ぶ) (hakobu)","meaning":"পরিবহন","exampleJp":"運動をします。","exampleRoma":"Undou o shimasu.","exampleBn":"ব্যায়াম করি।"},
+{"id":277,"kanji":"転","options":["ঘুরা","থামা","চলা","উড়া"],"correctOption":"ঘুরা","reading":"ころ(ぶ) (Kun)","onyomi":"テン (ten)","kunyomi":"ころ(ぶ) (korobu)","meaning":"ঘুরা","exampleJp":"自転車に乗ります。","exampleRoma":"Jitensha ni norimasu.","exampleBn":"সাইকেল চালাই।"},
+{"id":278,"kanji":"選","options":["নির্বাচন করা","বাতিল করা","ভাঙা","ছিঁড়া"],"correctOption":"নির্বাচন করা","reading":"えら(ぶ) (Kun)","onyomi":"セン (sen)","kunyomi":"えら(ぶ) (erabu)","meaning":"নির্বাচন করা","exampleJp":"選手を選びます。","exampleRoma":"Senshu o erabimasu.","exampleBn":"খেলোয়াড় নির্বাচন করি।"},
+{"id":279,"kanji":"記","options":["লেখা","পড়া","মুছে ফেলা","ছিঁড়া"],"correctOption":"লেখা","reading":"しる(す) (Kun)","onyomi":"キ (ki)","kunyomi":"しる(す) (shirusu)","meaning":"লেখা","exampleJp":"日記を書きます。","exampleRoma":"Nikki o kakimasu.","exampleBn":"ডায়েরি লিখি।"},
+{"id":280,"kanji":"議","options":["আলোচনা","নীরবতা","বিরতি","থামা"],"correctOption":"আলোচনা","reading":"ギ (On)","onyomi":"ギ (gi)","kunyomi":"—","meaning":"আলোচনা","exampleJp":"会議をします。","exampleRoma":"Kaigi o shimasu.","exampleBn":"সভা করি।"},
+{"id":281,"kanji":"員","options":["সদস্য","নেতা","শিক্ষক","ছাত্র"],"correctOption":"সদস্য","reading":"イン (On)","onyomi":"イン (in)","kunyomi":"—","meaning":"সদস্য","exampleJp":"会社員です。","exampleRoma":"Kaishain desu.","exampleBn":"কোম্পানির কর্মচারী।"},
+{"id":282,"kanji":"商","options":["বাণিজ্য","কৃষি","শিল্প","শিক্ষা"],"correctOption":"বাণিজ্য","reading":"ショウ (On)","onyomi":"ショウ (shou)","kunyomi":"あきな(う) (akinau)","meaning":"বাণিজ্য","exampleJp":"商業を学びます。","exampleRoma":"Shougyou o manabimasu.","exampleBn":"বাণিজ্য শিখি।"},
+{"id":283,"kanji":"業","options":["ব্যবসা","খেলা","পড়া","ঘুম"],"correctOption":"ব্যবসা","reading":"ギョウ (On)","onyomi":"ギョウ (gyou)","kunyomi":"わざ (waza)","meaning":"ব্যবসা","exampleJp":"工業を学びます。","exampleRoma":"Kougyou o manabimasu.","exampleBn":"শিল্প শিখি।"},
+{"id":284,"kanji":"良","options":["ভালো","খারাপ","মাঝারি","অতি"],"correctOption":"ভালো","reading":"よ(い) (Kun)","onyomi":"リョウ (ryou)","kunyomi":"よ(い) (yoi)","meaning":"ভালো","exampleJp":"良い天気です。","exampleRoma":"Yoi tenki desu.","exampleBn":"ভালো আবহাওয়া।"},
+{"id":285,"kanji":"悪","options":["খারাপ","ভালো","মাঝারি","অতি"],"correctOption":"খারাপ","reading":"わる(い) (Kun)","onyomi":"アク (aku)","kunyomi":"わる(い) (warui)","meaning":"খারাপ","exampleJp":"悪い天気です。","exampleRoma":"Warui tenki desu.","exampleBn":"খারাপ আবহাওয়া।"},
+{"id":286,"kanji":"点","options":["বিন্দু","রেখা","বৃত্ত","চতুর্ভুজ"],"correctOption":"বিন্দু","reading":"テン (On)","onyomi":"テン (ten)","kunyomi":"—","meaning":"বিন্দু","exampleJp":"テストで百点を取りました。","exampleRoma":"Tesuto de hyakuten o torimashita.","exampleBn":"পরীক্ষায় ১০০ পেয়েছি।"},
+{"id":287,"kanji":"正","options":["সঠিক","ভুল","মাঝারি","অতি"],"correctOption":"সঠিক","reading":"ただ(しい) (Kun)","onyomi":"セイ・ショウ (sei/shou)","kunyomi":"ただ(しい) (tadashii)","meaning":"সঠিক","exampleJp":"正しい答えです。","exampleRoma":"Tadashii kotae desu.","exampleBn":"সঠিক উত্তর।"},
+{"id":288,"kanji":"違","options":["ভিন্ন হওয়া","একই হওয়া","মিলিত হওয়া","সাদৃশ্য হওয়া"],"correctOption":"ভিন্ন হওয়া","reading":"ちが(う) (Kun)","onyomi":"イ (i)","kunyomi":"ちが(う) (chigau)","meaning":"ভিন্ন হওয়া","exampleJp":"答えが違います。","exampleRoma":"Kotae ga chigaimasu.","exampleBn":"উত্তর ভিন্ন।"},
+{"id":289,"kanji":"同","options":["একই","ভিন্ন","মিলিত","বিচ্ছিন্ন"],"correctOption":"একই","reading":"おな(じ) (Kun)","onyomi":"ドウ (dou)","kunyomi":"おな(じ) (onaji)","meaning":"একই","exampleJp":"同じ本を読みました。","exampleRoma":"Onaji hon o yomimashita.","exampleBn":"একই বই পড়েছি।"},
+{"id":290,"kanji":"適","options":["উপযুক্ত","অনুপযুক্ত","মাঝারি","অতি"],"correctOption":"উপযুক্ত","reading":"テキ (On)","onyomi":"テキ (teki)","kunyomi":"かな(う) (kanau)","meaning":"উপযুক্ত","exampleJp":"適当な大きさです。","exampleRoma":"Tekitou na ookisa desu.","exampleBn":"উপযুক্ত আকার।"},
+{"id":291,"kanji":"当","options":["আঘাত করা","বাঁচানো","থামানো","চালানো"],"correctOption":"আঘাত করা","reading":"あ(たる) (Kun)","onyomi":"トウ (tou)","kunyomi":"あ(たる)・あ(てる) (ataru/ateru)","meaning":"আঘাত করা","exampleJp":"宝くじに当たりました。","exampleRoma":"Takarakuji ni atarimashita.","exampleBn":"লটারিতে জিতেছি।"},
+{"id":292,"kanji":"難","options":["কঠিন","সহজ","মাঝারি","অতি"],"correctOption":"কঠিন","reading":"むずか(しい) (Kun)","onyomi":"ナン (nan)","kunyomi":"むずか(しい) (muzukashii)","meaning":"কঠিন","exampleJp":"難しい問題です。","exampleRoma":"Muzukashii mondai desu.","exampleBn":"কঠিন সমস্যা।"},
+{"id":293,"kanji":"次","options":["পরবর্তী","পূর্ববর্তী","বর্তমান","অতীত"],"correctOption":"পরবর্তী","reading":"つ(ぐ) (Kun)","onyomi":"ジ (ji)","kunyomi":"つ(ぐ)・つぎ (tsugu/tsugi)","meaning":"পরবর্তী","exampleJp":"次の電車に乗ります。","exampleRoma":"Tsugi no densha ni norimasu.","exampleBn":"পরের ট্রেনে চড়ি।"},
+{"id":294,"kanji":"形","options":["আকার","রং","গন্ধ","স্বাদ"],"correctOption":"আকার","reading":"かたち (Kun)","onyomi":"ケイ・ギョウ (kei/gyou)","kunyomi":"かた・かたち (kata/katachi)","meaning":"আকার","exampleJp":"星の形をしています。","exampleRoma":"Hoshi no katachi o shite imasu.","exampleBn":"তারার আকার।"},
+{"id":295,"kanji":"味","options":["স্বাদ","গন্ধ","রং","আকার"],"correctOption":"স্বাদ","reading":"あじ (Kun)","onyomi":"ミ (mi)","kunyomi":"あじ・あじ(わう) (aji/ajiwau)","meaning":"স্বাদ","exampleJp":"味がいいです。","exampleRoma":"Aji ga ii desu.","exampleBn":"স্বাদ ভালো।"},
+{"id":296,"kanji":"試","options":["পরীক্ষা করা","ফেলে দেওয়া","ভাঙা","ছিঁড়া"],"correctOption":"পরীক্ষা করা","reading":"こころ(みる) (Kun)","onyomi":"シ (shi)","kunyomi":"こころ(みる)・ため(す) (kokoromiru/tamesu)","meaning":"পরীক্ষা করা","exampleJp":"試験を受けます。","exampleRoma":"Shiken o ukemasu.","exampleBn":"পরীক্ষা দিই।"},
+{"id":297,"kanji":"験","options":["পরীক্ষা","পরীক্ষণ","অনুভব","অভিজ্ঞতা"],"correctOption":"পরীক্ষা","reading":"ケン (On)","onyomi":"ケン (ken)","kunyomi":"—","meaning":"পরীক্ষা","exampleJp":"試験に合格しました。","exampleRoma":"Shiken ni goukaku shimashita.","exampleBn":"পরীক্ষায় পাস করেছি।"},
+{"id":298,"kanji":"面","options":["মুখ","মাথা","হাত","পা"],"correctOption":"মুখ","reading":"おもて (Kun)","onyomi":"メン (men)","kunyomi":"おもて (omote)","meaning":"মুখ","exampleJp":"面接を受けます。","exampleRoma":"Mensetsu o ukemasu.","exampleBn":"ইন্টারভিউ দিই।"},
+{"id":299,"kanji":"接","options":["সংযুক্ত করা","বিচ্ছিন্ন করা","ভাঙা","ছিঁড়া"],"correctOption":"সংযুক্ত করা","reading":"つ(く) (Kun)","onyomi":"セツ (setsu)","kunyomi":"つ(く) (tsuku)","meaning":"সংযুক্ত করা","exampleJp":"接続します。","exampleRoma":"Setsuzoku shimasu.","exampleBn":"সংযুক্ত করি।"},
+{"id":300,"kanji":"説","options":["ব্যাখ্যা করা","গোপন করা","লুকানো","চাপা দেওয়া"],"correctOption":"ব্যাখ্যা করা","reading":"と(く) (Kun)","onyomi":"セツ (setsu)","kunyomi":"と(く) (toku)","meaning":"ব্যাখ্যা করা","exampleJp":"説明します。","exampleRoma":"Setsumei shimasu.","exampleBn":"ব্যাখ্যা করি।"},
+{"id":301,"kanji":"果","options":["ফল","ফুল","পাতা","শিকড়"],"correctOption":"ফল","reading":"は(たす) (Kun)","onyomi":"カ (ka)","kunyomi":"は(たす) (hatasu)","meaning":"ফল","exampleJp":"結果を待ちます。","exampleRoma":"Kekka o machimasu.","exampleBn":"ফলাফলের জন্য অপেক্ষা করি।"},
+{"id":302,"kanji":"合","options":["মিলিত হওয়া","বিচ্ছিন্ন হওয়া","ভাঙা","ছিঁড়া"],"correctOption":"মিলিত হওয়া","reading":"あ(う) (Kun)","onyomi":"ゴウ・ガッ (gou/gatsu)","kunyomi":"あ(う)・あ(わす) (au/awasu)","meaning":"মিলিত হওয়া","exampleJp":"答えが合っています。","exampleRoma":"Kotae ga atte imasu.","exampleBn":"উত্তর মিলেছে।"},
+{"id":303,"kanji":"格","options":["মান","অবস্থা","আকার","রং"],"correctOption":"মান","reading":"カク (On)","onyomi":"カク (kaku)","kunyomi":"—","meaning":"মান","exampleJp":"合格しました。","exampleRoma":"Goukaku shimashita.","exampleBn":"পাস করেছি।"},
+{"id":304,"kanji":"受","options":["গ্রহণ করা","দেওয়া","ফেলে দেওয়া","ভাঙা"],"correctOption":"গ্রহণ করা","reading":"う(ける) (Kun)","onyomi":"ジュ (ju)","kunyomi":"う(ける)・う(かる) (ukeru/ukaru)","meaning":"গ্রহণ করা","exampleJp":"試験を受けます。","exampleRoma":"Shiken o ukemasu.","exampleBn":"পরীক্ষা দিই।"},
+{"id":305,"kanji":"落","options":["পড়ে যাওয়া","ওঠা","দাঁড়ানো","বসা"],"correctOption":"পড়ে যাওয়া","reading":"お(ちる) (Kun)","onyomi":"ラク (raku)","kunyomi":"お(ちる)・お(とす) (ochiru/otosu)","meaning":"পড়ে যাওয়া","exampleJp":"木から落ちました。","exampleRoma":"Ki kara ochimashita.","exampleBn":"গাছ থেকে পড়ে গেছি।"},
+{"id":306,"kanji":"残","options":["অবশিষ্ট থাকা","শেষ হওয়া","শুরু হওয়া","থাকা"],"correctOption":"অবশিষ্ট থাকা","reading":"のこ(る) (Kun)","onyomi":"ザン (zan)","kunyomi":"のこ(る)・のこ(す) (nokoru/nokosu)","meaning":"অবশিষ্ট থাকা","exampleJp":"お金が残っています。","exampleRoma":"Okane ga nokotte imasu.","exampleBn":"টাকা অবশিষ্ট আছে।"},
+{"id":307,"kanji":"念","options":["চিন্তা","আনন্দ","দুঃখ","রাগ"],"correctOption":"চিন্তা","reading":"ネン (On)","onyomi":"ネン (nen)","kunyomi":"—","meaning":"চিন্তা","exampleJp":"残念です。","exampleRoma":"Zannen desu.","exampleBn":"দুঃখজনক।"},
+{"id":308,"kanji":"指","options":["আঙুল","হাত","পা","মাথা"],"correctOption":"আঙুল","reading":"ゆび (Kun)","onyomi":"シ (shi)","kunyomi":"ゆび・さ(す) (yubi/sasu)","meaning":"আঙুল","exampleJp":"指で指します。","exampleRoma":"Yubi de sashimasu.","exampleBn":"আঙুল দিয়ে দেখাই।"},
+{"id":309,"kanji":"折","options":["ভাঁজ করা","সোজা করা","ছিঁড়া","ভাঙা"],"correctOption":"ভাঁজ করা","reading":"お(る) (Kun)","onyomi":"セツ (setsu)","kunyomi":"お(る) (oru)","meaning":"ভাঁজ করা","exampleJp":"紙を折ります。","exampleRoma":"Kami o orimasu.","exampleBn":"কাগজ ভাঁজ করি।"},
+{"id":310,"kanji":"払","options":["পরিশোধ করা","গ্রহণ করা","দেওয়া","নেওয়া"],"correctOption":"পরিশোধ করা","reading":"はら(う) (Kun)","onyomi":"フツ (futsu)","kunyomi":"はら(う) (harau)","meaning":"পরিশোধ করা","exampleJp":"お金を払います。","exampleRoma":"Okane o haraimasu.","exampleBn":"টাকা পরিশোধ করি।"},
+{"id":311,"kanji":"投","options":["নিক্ষেপ করা","ধরা","ফেলা","তোলা"],"correctOption":"নিক্ষেপ করা","reading":"な(げる) (Kun)","onyomi":"トウ (tou)","kunyomi":"な(げる) (nageru)","meaning":"নিক্ষেপ করা","exampleJp":"ボールを投げます。","exampleRoma":"Booru o nagemasu.","exampleBn":"বল নিক্ষেপ করি।"},
+{"id":312,"kanji":"打","options":["আঘাত করা","ধরা","ফেলা","তোলা"],"correctOption":"আঘাত করা","reading":"う(つ) (Kun)","onyomi":"ダ (da)","kunyomi":"う(つ) (utsu)","meaning":"আঘাত করা","exampleJp":"ボールを打ちます。","exampleRoma":"Booru o uchimasu.","exampleBn":"বল আঘাত করি।"},
+{"id":313,"kanji":"深","options":["গভীর","অগভীর","লম্বা","খাটো"],"correctOption":"গভীর","reading":"ふか(い) (Kun)","onyomi":"シン (shin)","kunyomi":"ふか(い) (fukai)","meaning":"গভীর","exampleJp":"深い海です。","exampleRoma":"Fukai umi desu.","exampleBn":"গভীর সমুদ্র।"},
+{"id":314,"kanji":"洗","options":["ধোয়া","মোছা","শুকানো","ভেজানো"],"correctOption":"ধোয়া","reading":"あら(う) (Kun)","onyomi":"セン (sen)","kunyomi":"あら(う) (arau)","meaning":"ধোয়া","exampleJp":"手を洗います。","exampleRoma":"Te o araimasu.","exampleBn":"হাত ধুই।"},
+{"id":315,"kanji":"旅","options":["ভ্রমণ","বিশ্রাম","কাজ","খেলা"],"correctOption":"ভ্রমণ","reading":"たび (Kun)","onyomi":"リョ (ryo)","kunyomi":"たび (tabi)","meaning":"ভ্রমণ","exampleJp":"旅行へ行きます。","exampleRoma":"Ryokou e ikimasu.","exampleBn":"ভ্রমণে যাই।"},
+{"id":316,"kanji":"約","options":["প্রতিশ্রুতি","বিচ্ছেদ","ভাঙা","ছিঁড়া"],"correctOption":"প্রতিশ্রুতি","reading":"ヤク (On)","onyomi":"ヤク (yaku)","kunyomi":"—","meaning":"প্রতিশ্রুতি","exampleJp":"約束をします。","exampleRoma":"Yakusoku o shimasu.","exampleBn":"প্রতিশ্রুতি করি।"},
+{"id":317,"kanji":"案","options":["পরিকল্পনা","বিচ্ছেদ","ভাঙা","ছিঁড়া"],"correctOption":"পরিকল্পনা","reading":"アン (On)","onyomi":"アン (an)","kunyomi":"—","meaning":"পরিকল্পনা","exampleJp":"案内します。","exampleRoma":"Annai shimasu.","exampleBn":"পথ দেখাই।"},
+{"id":318,"kanji":"準","options":["প্রস্তুতি","বিশ্রাম","খেলা","ঘুম"],"correctOption":"প্রস্তুতি","reading":"ジュン (On)","onyomi":"ジュン (jun)","kunyomi":"—","meaning":"প্রস্তুতি","exampleJp":"準備をします。","exampleRoma":"Junbi o shimasu.","exampleBn":"প্রস্তুতি নিই।"},
+{"id":319,"kanji":"備","options":["প্রস্তুত করা","ভাঙা","ছিঁড়া","ফেলা"],"correctOption":"প্রস্তুত করা","reading":"そな(える) (Kun)","onyomi":"ビ (bi)","kunyomi":"そな(える)・そな(わる) (sonaeru/sonawaru)","meaning":"প্রস্তুত করা","exampleJp":"備えます。","exampleRoma":"Sonaemasu.","exampleBn":"প্রস্তুতি নিই।"},
+{"id":320,"kanji":"相","options":["একে অপর","আলাদা","একাকী","সবার"],"correctOption":"একে অপর","reading":"あい (Kun)","onyomi":"ソウ (sou)","kunyomi":"あい (ai)","meaning":"একে অপর","exampleJp":"相談します。","exampleRoma":"Soudan shimasu.","exampleBn":"পরামর্শ করি।"},
+{"id":321,"kanji":"談","options":["কথা বলা","নীরব থাকা","শোনা","দেখা"],"correctOption":"কথা বলা","reading":"ダン (On)","onyomi":"ダン (dan)","kunyomi":"—","meaning":"কথা বলা","exampleJp":"相談します。","exampleRoma":"Soudan shimasu.","exampleBn":"পরামর্শ করি।"},
+{"id":322,"kanji":"連","options":["সঙ্গে নেওয়া","একা যাওয়া","ফেলে আসা","ভুলে যাওয়া"],"correctOption":"সঙ্গে নেওয়া","reading":"つ(れる) (Kun)","onyomi":"レン (ren)","kunyomi":"つ(れる)・つ(らなる) (tsureru/tsuranaru)","meaning":"সঙ্গে নেওয়া","exampleJp":"連絡します。","exampleRoma":"Renraku shimasu.","exampleBn":"যোগাযোগ করি।"},
+{"id":323,"kanji":"絡","options":["জড়ানো","খোলা","ছিঁড়া","ভাঙা"],"correctOption":"জড়ানো","reading":"から(む) (Kun)","onyomi":"ラク (raku)","kunyomi":"から(む) (karamu)","meaning":"জড়ানো","exampleJp":"連絡します。","exampleRoma":"Renraku shimasu.","exampleBn":"যোগাযোগ করি।"},
+{"id":324,"kanji":"泊","options":["রাত কাটানো","দিন কাটানো","যাওয়া","আসা"],"correctOption":"রাত কাটানো","reading":"と(まる) (Kun)","onyomi":"ハク (haku)","kunyomi":"と(まる)・と(める) (tomaru/tomeru)","meaning":"রাত কাটানো","exampleJp":"ホテルに泊まります。","exampleRoma":"Hoteru ni tomarimasu.","exampleBn":"হোটেলে রাত কাটাই।"},
+{"id":325,"kanji":"特","options":["বিশেষ","সাধারণ","মাঝারি","অতি"],"correctOption":"বিশেষ","reading":"トク (On)","onyomi":"トク (toku)","kunyomi":"—","meaning":"বিশেষ","exampleJp":"特別な日です。","exampleRoma":"Tokubetsu na hi desu.","exampleBn":"বিশেষ দিন।"},
+{"id":326,"kanji":"急","options":["তাড়াহুড়ো","ধীর","শান্ত","বিশ্রাম"],"correctOption":"তাড়াহুড়ো","reading":"いそ(ぐ) (Kun)","onyomi":"キュウ (kyuu)","kunyomi":"いそ(ぐ) (isogu)","meaning":"তাড়াহুড়ো","exampleJp":"急ぎます。","exampleRoma":"Isogimasu.","exampleBn":"তাড়াহুড়ো করি।"},
+{"id":327,"kanji":"線","options":["রেখা","বৃত্ত","বিন্দু","চতুর্ভুজ"],"correctOption":"রেখা","reading":"セン (On)","onyomi":"セン (sen)","kunyomi":"—","meaning":"রেখা","exampleJp":"線を引きます。","exampleRoma":"Sen o hikimasu.","exampleBn":"রেখা টানি।"},
+{"id":328,"kanji":"発","options":["যাত্রা করা","থামা","পৌঁছানো","ফিরা"],"correctOption":"যাত্রা করা","reading":"ハツ (On)","onyomi":"ハツ・ホツ (hatsu/hotsu)","kunyomi":"た(つ) (tatsu)","meaning":"যাত্রা করা","exampleJp":"出発します。","exampleRoma":"Shuppatsu shimasu.","exampleBn":"যাত্রা করি।"},
+{"id":329,"kanji":"到","options":["পৌঁছানো","যাত্রা করা","থামা","ফিরা"],"correctOption":"পৌঁছানো","reading":"いた(る) (Kun)","onyomi":"トウ (tou)","kunyomi":"いた(る) (itaru)","meaning":"পৌঁছানো","exampleJp":"到着しました。","exampleRoma":"Touchaku shimashita.","exampleBn":"পৌঁছেছি।"},
+{"id":330,"kanji":"交","options":["মেশা","বিচ্ছিন্ন হওয়া","থামা","শুরু করা"],"correctOption":"মেশা","reading":"ま(じる) (Kun)","onyomi":"コウ (kou)","kunyomi":"ま(じる)・ま(ざる) (majiru/mazaru)","meaning":"মেশা","exampleJp":"交通に気をつけます。","exampleRoma":"Koutsuu ni ki o tsukemasu.","exampleBn":"যাতায়াতে সতর্ক থাকি।"},
+{"id":331,"kanji":"信","options":["বিশ্বাস করা","সন্দেহ করা","ভয় পাওয়া","ঘৃণা করা"],"correctOption":"বিশ্বাস করা","reading":"シン (On)","onyomi":"シン (shin)","kunyomi":"—","meaning":"বিশ্বাস করা","exampleJp":"信じます。","exampleRoma":"Shinjimasu.","exampleBn":"বিশ্বাস করি।"},
+{"id":332,"kanji":"故","options":["কারণ","ফল","সময়","স্থান"],"correctOption":"কারণ","reading":"コ (On)","onyomi":"コ (ko)","kunyomi":"ゆえ (yue)","meaning":"কারণ","exampleJp":"事故に遭いました。","exampleRoma":"Jiko ni aimashita.","exampleBn":"দুর্ঘটনায় পড়েছি।"},
+{"id":333,"kanji":"意","options":["অর্থ","শব্দ","বাক্য","অক্ষর"],"correctOption":"অর্থ","reading":"イ (On)","onyomi":"イ (i)","kunyomi":"—","meaning":"অর্থ","exampleJp":"意味を教えてください。","exampleRoma":"Imi o oshiete kudasai.","exampleBn":"অর্থ বলুন।"},
+{"id":334,"kanji":"押","options":["চাপ দেওয়া","টানা","ধরা","ফেলা"],"correctOption":"চাপ দেওয়া","reading":"お(す) (Kun)","onyomi":"オウ (ou)","kunyomi":"お(す) (osu)","meaning":"চাপ দেওয়া","exampleJp":"ボタンを押します。","exampleRoma":"Botan o oshimasu.","exampleBn":"বোতাম চাপি।"},
+{"id":335,"kanji":"引","options":["টানা","চাপ দেওয়া","ধরা","ফেলা"],"correctOption":"টানা","reading":"ひ(く) (Kun)","onyomi":"イン (in)","kunyomi":"ひ(く) (hiku)","meaning":"টানা","exampleJp":"ドアを引いてください。","exampleRoma":"Doa o hiite kudasai.","exampleBn":"দরজা টানুন।"},
+{"id":336,"kanji":"割","options":["ভাগ করা","গুণ করা","যোগ করা","বিয়োগ করা"],"correctOption":"ভাগ করা","reading":"わ(る) (Kun)","onyomi":"カツ (katsu)","kunyomi":"わ(る)・わ(れる) (waru/wareru)","meaning":"ভাগ করা","exampleJp":"ケーキを割ります。","exampleRoma":"Keeki o warimasu.","exampleBn":"কেক ভাগ করি।"},
+{"id":337,"kanji":"求","options":["চাওয়া","দেওয়া","নেওয়া","ফেলা"],"correctOption":"চাওয়া","reading":"もと(める) (Kun)","onyomi":"キュウ (kyuu)","kunyomi":"もと(める) (motomeru)","meaning":"চাওয়া","exampleJp":"助けを求めます。","exampleRoma":"Tasuke o motomemasu.","exampleBn":"সাহায্য চাই।"},
+{"id":338,"kanji":"願","options":["অনুরোধ করা","আদেশ দেওয়া","নিষেধ করা","বারণ করা"],"correctOption":"অনুরোধ করা","reading":"ねが(う) (Kun)","onyomi":"ガン (gan)","kunyomi":"ねが(う) (negau)","meaning":"অনুরোধ করা","exampleJp":"お願いします。","exampleRoma":"Onegai shimasu.","exampleBn":"অনুরোধ করি।"},
+{"id":339,"kanji":"知","options":["জানা","ভাবা","দেখা","শোনা"],"correctOption":"জানা","reading":"し(る) (Kun)","onyomi":"チ (chi)","kunyomi":"し(る) (shiru)","meaning":"জানা","exampleJp":"彼の名前を知っています。","exampleRoma":"Kare no namae o shitte imasu.","exampleBn":"তার নাম জানি।"},
+{"id":340,"kanji":"台","options":["মঞ্চ","পাহাড়","নদী","আকাশ"],"correctOption":"মঞ্চ","reading":"ダイ・タイ (On)","onyomi":"ダイ・タイ (dai/tai)","kunyomi":"—","meaning":"মঞ্চ","exampleJp":"台所で料理します。","exampleRoma":"Daidokoro de ryouri shimasu.","exampleBn":"রান্নাঘরে রান্না করি।"},
+{"id":341,"kanji":"窓","options":["জানালা","দরজা","ছাদ","মেঝে"],"correctOption":"জানালা","reading":"まど (Kun)","onyomi":"ソウ (sou)","kunyomi":"まど (mado)","meaning":"জানালা","exampleJp":"窓を開けます。","exampleRoma":"Mado o akemasu.","exampleBn":"জানালা খুলি।"},
+{"id":342,"kanji":"器","options":["পাত্র","খাদ্য","পানি","বাতাস"],"correctOption":"পাত্র","reading":"うつわ (Kun)","onyomi":"キ (ki)","kunyomi":"うつわ (utsuwa)","meaning":"পাত্র","exampleJp":"食器を洗います。","exampleRoma":"Shokki o araimasu.","exampleBn":"খাবারের পাত্র ধুই।"},
+{"id":343,"kanji":"用","options":["ব্যবহার করা","ফেলে দেওয়া","ভাঙা","ছিঁড়া"],"correctOption":"ব্যবহার করা","reading":"もち(いる) (Kun)","onyomi":"ヨウ (you)","kunyomi":"もち(いる) (mochiiru)","meaning":"ব্যবহার করা","exampleJp":"この道具を使います。","exampleRoma":"Kono dougu o tsukaimasu.","exampleBn":"এই যন্ত্র ব্যবহার করি।"},
+{"id":344,"kanji":"服","options":["পোশাক","খাদ্য","পানি","বাতাস"],"correctOption":"পোশাক","reading":"フク (On)","onyomi":"フク (fuku)","kunyomi":"—","meaning":"পোশাক","exampleJp":"服を着ます。","exampleRoma":"Fuku o kimasu.","exampleBn":"পোশাক পরি।"},
+{"id":345,"kanji":"紙","options":["কাগজ","কাপড়","কাঠ","ধাতু"],"correctOption":"কাগজ","reading":"かみ (Kun)","onyomi":"シ (shi)","kunyomi":"かみ (kami)","meaning":"কাগজ","exampleJp":"紙に書きます。","exampleRoma":"Kami ni kakimasu.","exampleBn":"কাগজে লিখি।"},
+{"id":346,"kanji":"辞","options":["শব্দ","বাক্য","অক্ষর","গল্প"],"correctOption":"শব্দ","reading":"ジ (On)","onyomi":"ジ (ji)","kunyomi":"や(める) (yameru)","meaning":"শব্দ","exampleJp":"辞書を使います。","exampleRoma":"Jisho o tsukaimasu.","exampleBn":"অভিধান ব্যবহার করি।"},
+{"id":347,"kanji":"銀","options":["রূপা","সোনা","তামা","লোহা"],"correctOption":"রূপা","reading":"ギン (On)","onyomi":"ギン (gin)","kunyomi":"—","meaning":"রূপা","exampleJp":"銀行へ行きます。","exampleRoma":"Ginkou e ikimasu.","exampleBn":"ব্যাংকে যাই।"},
+{"id":348,"kanji":"個","options":["ব্যক্তি","দল","সকল","কিছু"],"correctOption":"ব্যক্তি","reading":"コ (On)","onyomi":"コ (ko)","kunyomi":"—","meaning":"ব্যক্তি","exampleJp":"個人で行きます。","exampleRoma":"Kojin de ikimasu.","exampleBn":"ব্যক্তিগতভাবে যাই।"},
+{"id":349,"kanji":"価","options":["মূল্য","গুণ","আকার","রং"],"correctOption":"মূল্য","reading":"カ (On)","onyomi":"カ (ka)","kunyomi":"あたい (atai)","meaning":"মূল্য","exampleJp":"物価が高いです。","exampleRoma":"Bukka ga takai desu.","exampleBn":"জিনিসের দাম বেশি।"},
+{"id":350,"kanji":"産","options":["উৎপাদন করা","খাওয়া","ফেলে দেওয়া","ভাঙা"],"correctOption":"উৎপাদন করা","reading":"う(む) (Kun)","onyomi":"サン (san)","kunyomi":"う(む)・う(まれる) (umu/umareru)","meaning":"উৎপাদন করা","exampleJp":"米を産します。","exampleRoma":"Kome o umashimasu.","exampleBn":"চাল উৎপাদন করি।"},
+{"id":351,"kanji":"期","options":["সময়কাল","মুহূর্ত","স্থান","ব্যক্তি"],"correctOption":"সময়কাল","reading":"キ (On)","onyomi":"キ (ki)","kunyomi":"—","meaning":"সময়কাল","exampleJp":"期間を決めます。","exampleRoma":"Kikan o kimemasu.","exampleBn":"সময়কাল নির্ধারণ করি।"},
+{"id":352,"kanji":"々","options":["পুনরাবৃত্তি চিহ্ন","সংখ্যা","অক্ষর","শব্দ"],"correctOption":"পুনরাবৃত্তি চিহ্ন","reading":"—","onyomi":"—","kunyomi":"—","meaning":"পুনরাবৃত্তি চিহ্ন","exampleJp":"人々が集まります。","exampleRoma":"Hitobito ga atsumarimasu.","exampleBn":"মানুষেরা জড়ো হয়।"},
+{"id":353,"kanji":"報","options":["রিপোর্ট","গোপন","লুকানো","চাপা দেওয়া"],"correctOption":"রিপোর্ট","reading":"ホウ (On)","onyomi":"ホウ (hou)","kunyomi":"むく(いる) (mukuiru)","meaning":"রিপোর্ট","exampleJp":"報告します。","exampleRoma":"Houkoku shimasu.","exampleBn":"রিপোর্ট করি।"},
+{"id":354,"kanji":"告","options":["ঘোষণা করা","গোপন করা","লুকানো","চাপা দেওয়া"],"correctOption":"ঘোষণা করা","reading":"つ(げる) (Kun)","onyomi":"コク (koku)","kunyomi":"つ(げる) (tsugeru)","meaning":"ঘোষণা করা","exampleJp":"広告を見ます。","exampleRoma":"Koukoku o mimasu.","exampleBn":"বিজ্ঞাপন দেখি।"},
+{"id":355,"kanji":"心","options":["হৃদয়","মাথা","হাত","পা"],"correctOption":"হৃদয়","reading":"こころ (Kun)","onyomi":"シン (shin)","kunyomi":"こころ (kokoro)","meaning":"হৃদয়","exampleJp":"心が温かくなります。","exampleRoma":"Kokoro ga atatakaku narimasu.","exampleBn":"মন উষ্ণ হয়ে যায়।"},
+{"id":356,"kanji":"感","options":["অনুভব করা","ভাবা","দেখা","শোনা"],"correctOption":"অনুভব করা","reading":"カン (On)","onyomi":"カン (kan)","kunyomi":"—","meaning":"অনুভব করা","exampleJp":"感謝します。","exampleRoma":"Kansha shimasu.","exampleBn":"কৃতজ্ঞতা জানাই।"},
+{"id":357,"kanji":"情","options":["আবেগ","যুক্তি","শব্দ","অর্থ"],"correctOption":"আবেগ","reading":"なさ(け) (Kun)","onyomi":"ジョウ・セイ (jou/sei)","kunyomi":"なさ(け) (nasake)","meaning":"আবেগ","exampleJp":"感情を表します。","exampleRoma":"Kanjou o arawashimasu.","exampleBn":"আবেগ প্রকাশ করি।"},
+{"id":358,"kanji":"悲","options":["দুঃখ","আনন্দ","রাগ","ভয়"],"correctOption":"দুঃখ","reading":"かな(しい) (Kun)","onyomi":"ヒ (hi)","kunyomi":"かな(しい)・かな(しむ) (kanashii/kanashimu)","meaning":"দুঃখ","exampleJp":"悲しいです。","exampleRoma":"Kanashii desu.","exampleBn":"দুঃখ লাগছে।"},
+{"id":359,"kanji":"泣","options":["কাঁদা","হাসা","চিৎকার করা","ঘুমানো"],"correctOption":"কাঁদা","reading":"な(く) (Kun)","onyomi":"キュウ (kyuu)","kunyomi":"な(く) (naku)","meaning":"কাঁদা","exampleJp":"子どもが泣いています。","exampleRoma":"Kodomo ga naite imasu.","exampleBn":"শিশু কাঁদছে।"},
+{"id":360,"kanji":"笑","options":["হাসা","কাঁদা","চিৎকার করা","ঘুমানো"],"correctOption":"হাসা","reading":"わら(う) (Kun)","onyomi":"ショウ (shou)","kunyomi":"わら(う) (warau)","meaning":"হাসা","exampleJp":"みんなが笑います。","exampleRoma":"Minna ga waraimasu.","exampleBn":"সবাই হাসে।"},
+{"id":361,"kanji":"頭","options":["মাথা","মুখ","হাত","পা"],"correctOption":"মাথা","reading":"あたま (Kun)","onyomi":"トウ・ズ (tou/zu)","kunyomi":"あたま・かしら (atama/kashira)","meaning":"মাথা","exampleJp":"頭が痛いです。","exampleRoma":"Atama ga itai desu.","exampleBn":"মাথা ব্যথা করছে।"},
+{"id":362,"kanji":"覚","options":["মনে রাখা","ভুলে যাওয়া","ঘুমানো","জাগা"],"correctOption":"মনে রাখা","reading":"おぼ(える) (Kun)","onyomi":"カク (kaku)","kunyomi":"おぼ(える)・さ(める)・さ(ます) (oboeru/sameru/samasu)","meaning":"মনে রাখা","exampleJp":"漢字を覚えます。","exampleRoma":"Kanji o oboemasu.","exampleBn":"কাঞ্জি মনে রাখি।"},
+{"id":363,"kanji":"焼","options":["পোড়ানো","ঠান্ডা করা","ধোয়া","কাটা"],"correctOption":"পোড়ানো","reading":"や(く) (Kun)","onyomi":"ショウ (shou)","kunyomi":"や(く)・や(ける) (yaku/yakeru)","meaning":"পোড়ানো","exampleJp":"肉を焼きます。","exampleRoma":"Niku o yakimasu.","exampleBn":"মাংস ভুনি।"},
+{"id":364,"kanji":"曲","options":["বাঁকা","সোজা","গোল","চৌকো"],"correctOption":"বাঁকা","reading":"ま(がる) (Kun)","onyomi":"キョク (kyoku)","kunyomi":"ま(がる)・ま(げる) (magaru/mageru)","meaning":"বাঁকা","exampleJp":"曲がります。","exampleRoma":"Magarimasu.","exampleBn":"বাঁকি।"},
+{"id":365,"kanji":"脱","options":["খোলা","পরা","ধোয়া","কাটা"],"correctOption":"খোলা","reading":"ぬ(ぐ) (Kun)","onyomi":"ダツ (datsu)","kunyomi":"ぬ(ぐ)・ぬ(げる) (nugu/nugeru)","meaning":"খোলা","exampleJp":"靴を脱ぎます。","exampleRoma":"Kutsu o nugimasu.","exampleBn":"জুতা খুলি।"},
+{"id":366,"kanji":"別","options":["আলাদা","একসাথে","মিলিত","সংযুক্ত"],"correctOption":"আলাদা","reading":"わか(れる) (Kun)","onyomi":"ベツ (betsu)","kunyomi":"わか(れる) (wakareru)","meaning":"আলাদা","exampleJp":"別々に行きます。","exampleRoma":"Betsubetsu ni ikimasu.","exampleBn":"আলাদা আলাদা যাই।"},
+{"id":367,"kanji":"集","options":["জড়ো করা","ছড়িয়ে দেওয়া","ফেলে দেওয়া","ভাঙা"],"correctOption":"জড়ো করা","reading":"あつ(まる) (Kun)","onyomi":"シュウ (shuu)","kunyomi":"あつ(まる)・あつ(める) (atsumaru/atsumeru)","meaning":"জড়ো করা","exampleJp":"切手を集めます。","exampleRoma":"Kitte o atsumemasu.","exampleBn":"স্ট্যাম্প জড়ো করি।"},
+{"id":368,"kanji":"並","options":["সারিবদ্ধ হওয়া","বিচ্ছিন্ন হওয়া","একা হওয়া","কমে যাওয়া"],"correctOption":"সারিবদ্ধ হওয়া","reading":"なら(ぶ) (Kun)","onyomi":"ヘイ (hei)","kunyomi":"なら(ぶ)・なら(べる)・なみ (narabu/naraberu/nami)","meaning":"সারিবদ্ধ হওয়া","exampleJp":"並びます。","exampleRoma":"Narabimasu.","exampleBn":"সারিবদ্ধ হই।"},
+{"id":369,"kanji":"喜","options":["আনন্দিত হওয়া","দুঃখিত হওয়া","রাগান্বিত হওয়া","ভীত হওয়া"],"correctOption":"আনন্দিত হওয়া","reading":"よろこ(ぶ) (Kun)","onyomi":"キ (ki)","kunyomi":"よろこ(ぶ) (yorokobu)","meaning":"আনন্দিত হওয়া","exampleJp":"喜びます。","exampleRoma":"Yorokobimasu.","exampleBn":"আনন্দিত হই।"},
+{"id":370,"kanji":"驚","options":["অবাক হওয়া","আনন্দিত হওয়া","দুঃখিত হওয়া","রাগান্বিত হওয়া"],"correctOption":"অবাক হওয়া","reading":"おどろ(く) (Kun)","onyomi":"キョウ (kyou)","kunyomi":"おどろ(く)・おどろ(かす) (odoroku/odorokasu)","meaning":"অবাক হওয়া","exampleJp":"驚きました。","exampleRoma":"Odorokimashita.","exampleBn":"অবাক হয়েছি।"},
+{"id":371,"kanji":"細","options":["সরু","মোটা","লম্বা","খাটো"],"correctOption":"সরু","reading":"ほそ(い) (Kun)","onyomi":"サイ (sai)","kunyomi":"ほそ(い)・こま(かい) (hosoi/komakai)","meaning":"সরু","exampleJp":"細い道です。","exampleRoma":"Hosoi michi desu.","exampleBn":"সরু পথ।"},
+{"id":372,"kanji":"太","options":["মোটা","সরু","লম্বা","খাটো"],"correctOption":"মোটা","reading":"ふと(い) (Kun)","onyomi":"タイ (tai)","kunyomi":"ふと(い)・ふと(る) (futoi/futoru)","meaning":"মোটা","exampleJp":"太い木です。","exampleRoma":"Futoi ki desu.","exampleBn":"মোটা গাছ।"},
+{"id":373,"kanji":"重","options":["ভারী","হালকা","লম্বা","খাটো"],"correctOption":"ভারী","reading":"おも(い) (Kun)","onyomi":"ジュウ・チョウ (juu/chou)","kunyomi":"おも(い)・かさ(なる) (omoi/kasanaru)","meaning":"ভারী","exampleJp":"重い荷物です。","exampleRoma":"Omoi nimotsu desu.","exampleBn":"ভারী মাল।"},
+{"id":374,"kanji":"軽","options":["হালকা","ভারী","লম্বা","খাটো"],"correctOption":"হালকা","reading":"かる(い) (Kun)","onyomi":"ケイ (kei)","kunyomi":"かる(い) (karui)","meaning":"হালকা","exampleJp":"軽いかばんです。","exampleRoma":"Karui kaban desu.","exampleBn":"হালকা ব্যাগ।"},
+{"id":375,"kanji":"狭","options":["সংকীর্ণ","প্রশস্ত","লম্বা","খাটো"],"correctOption":"সংকীর্ণ","reading":"せま(い) (Kun)","onyomi":"キョウ (kyou)","kunyomi":"せま(い) (semai)","meaning":"সংকীর্ণ","exampleJp":"狭い部屋です。","exampleRoma":"Semai heya desu.","exampleBn":"সংকীর্ণ ঘর।"},
+{"id":376,"kanji":"弱","options":["দুর্বল","শক্তিশালী","দ্রুত","ধীর"],"correctOption":"দুর্বল","reading":"よわ(い) (Kun)","onyomi":"ジャク (jaku)","kunyomi":"よわ(い) (yowai)","meaning":"দুর্বল","exampleJp":"体が弱いです。","exampleRoma":"Karada ga yowai desu.","exampleBn":"শরীর দুর্বল।"},
+{"id":377,"kanji":"眠","options":["ঘুমানো","জাগা","বসা","দাঁড়ানো"],"correctOption":"ঘুমানো","reading":"ねむ(い) (Kun)","onyomi":"ミン (min)","kunyomi":"ねむ(い)・ねむ(る) (nemui/nemuru)","meaning":"ঘুমানো","exampleJp":"眠いです。","exampleRoma":"Nemui desu.","exampleBn":"ঘুম পাচ্ছে।"},
+{"id":378,"kanji":"苦","options":["কষ্ট","আনন্দ","সুখ","শান্তি"],"correctOption":"কষ্ট","reading":"くる(しい) (Kun)","onyomi":"ク (ku)","kunyomi":"くる(しい)・にが(い) (kurushii/nigai)","meaning":"কষ্ট","exampleJp":"苦しいです。","exampleRoma":"Kurushii desu.","exampleBn":"কষ্ট হচ্ছে।"},
+{"id":379,"kanji":"簡","options":["সরল","জটিল","কঠিন","দীর্ঘ"],"correctOption":"সরল","reading":"カン (On)","onyomi":"カン (kan)","kunyomi":"—","meaning":"সরল","exampleJp":"簡単な問題です。","exampleRoma":"Kantan na mondai desu.","exampleBn":"সহজ সমস্যা।"},
+{"id":380,"kanji":"単","options":["সরল","জটিল","কঠিন","দীর্ঘ"],"correctOption":"সরল","reading":"タン (On)","onyomi":"タン (tan)","kunyomi":"—","meaning":"সরল","exampleJp":"単語を覚えます。","exampleRoma":"Tango o oboemasu.","exampleBn":"শব্দ মনে রাখি।"},
+{"id":381,"kanji":"空","options":["আকাশ","সমুদ্র","পাহাড়","নদী"],"correctOption":"আকাশ","reading":"そら (Kun)","onyomi":"クウ (kuu)","kunyomi":"そら・あ(く)・から (sora/aku/kara)","meaning":"আকাশ","exampleJp":"空が青いです。","exampleRoma":"Sora ga aoi desu.","exampleBn":"আকাশ নীল।"},
+{"id":382,"kanji":"港","options":["বন্দর","সৈকত","নদী","সমুদ্র"],"correctOption":"বন্দর","reading":"みなと (Kun)","onyomi":"コウ (kou)","kunyomi":"みなと (minato)","meaning":"বন্দর","exampleJp":"港へ行きます。","exampleRoma":"Minato e ikimasu.","exampleBn":"বন্দরে যাই।"},
+{"id":383,"kanji":"飛","options":["উড়া","দৌড়ানো","হাঁটা","লাফানো"],"correctOption":"উড়া","reading":"と(ぶ) (Kun)","onyomi":"ヒ (hi)","kunyomi":"と(ぶ)・と(ばす) (tobu/tobasu)","meaning":"উড়া","exampleJp":"鳥が飛んでいます。","exampleRoma":"Tori ga tonde imasu.","exampleBn":"পাখি উড়ছে।"},
+{"id":384,"kanji":"階","options":["তলা","ছাদ","মেঝে","দরজা"],"correctOption":"তলা","reading":"カイ (On)","onyomi":"カイ (kai)","kunyomi":"—","meaning":"তলা","exampleJp":"二階に住んでいます。","exampleRoma":"Nikai ni sunde imasu.","exampleBn":"দোতলায় থাকি।"},
+{"id":385,"kanji":"建","options":["নির্মাণ করা","ভাঙা","ছিঁড়া","ফেলে দেওয়া"],"correctOption":"নির্মাণ করা","reading":"た(てる) (Kun)","onyomi":"ケン (ken)","kunyomi":"た(てる)・た(つ) (tateru/tatsu)","meaning":"নির্মাণ করা","exampleJp":"家を建てます。","exampleRoma":"Ie o tatemasu.","exampleBn":"বাড়ি নির্মাণ করি।"},
+{"id":386,"kanji":"設","options":["স্থাপন করা","ভাঙা","ছিঁড়া","ফেলে দেওয়া"],"correctOption":"স্থাপন করা","reading":"もう(ける) (Kun)","onyomi":"セツ (setsu)","kunyomi":"もう(ける) (moukeru)","meaning":"স্থাপন করা","exampleJp":"設備を整えます。","exampleRoma":"Setsubi o totonoemasu.","exampleBn":"সুবিধা প্রস্তুত করি।"},
+{"id":387,"kanji":"完","options":["সম্পূর্ণ","অসম্পূর্ণ","মাঝারি","অতি"],"correctOption":"সম্পূর্ণ","reading":"カン (On)","onyomi":"カン (kan)","kunyomi":"—","meaning":"সম্পূর্ণ","exampleJp":"完成しました。","exampleRoma":"Kansei shimashita.","exampleBn":"সম্পূর্ণ হয়েছে।"},
+{"id":388,"kanji":"成","options":["পরিণত হওয়া","ভাঙা","ছিঁড়া","ফেলে দেওয়া"],"correctOption":"পরিণত হওয়া","reading":"な(る) (Kun)","onyomi":"セイ・ジョウ (sei/jou)","kunyomi":"な(る)・な(す) (naru/nasu)","meaning":"পরিণত হওয়া","exampleJp":"成功しました。","exampleRoma":"Seikou shimashita.","exampleBn":"সফল হয়েছি।"},
+{"id":389,"kanji":"費","options":["খরচ","আয়","সঞ্চয়","ঋণ"],"correctOption":"খরচ","reading":"つい(やす) (Kun)","onyomi":"ヒ (hi)","kunyomi":"つい(やす) (tsuiyasu)","meaning":"খরচ","exampleJp":"費用がかかります。","exampleRoma":"Hiyou ga kakarimasu.","exampleBn":"খরচ হয়।"},
+{"id":390,"kanji":"放","options":["ছেড়ে দেওয়া","ধরা","বন্দী করা","আটকানো"],"correctOption":"ছেড়ে দেওয়া","reading":"はな(す) (Kun)","onyomi":"ホウ (hou)","kunyomi":"はな(す)・はな(つ) (hanasu/hanatsu)","meaning":"ছেড়ে দেওয়া","exampleJp":"放送します。","exampleRoma":"Housou shimasu.","exampleBn":"সম্প্রচার করি।"},
+{"id":391,"kanji":"位","options":["পদ","স্থান","সময়","ব্যক্তি"],"correctOption":"পদ","reading":"くらい (Kun)","onyomi":"イ (i)","kunyomi":"くらい (kurai)","meaning":"পদ","exampleJp":"一位になりました。","exampleRoma":"Ichii ni narimashita.","exampleBn":"প্রথম হয়েছি।"},
+{"id":392,"kanji":"置","options":["রাখা","তোলা","ফেলা","ছোড়া"],"correctOption":"রাখা","reading":"お(く) (Kun)","onyomi":"チ (chi)","kunyomi":"お(く) (oku)","meaning":"রাখা","exampleJp":"本を置きます。","exampleRoma":"Hon o okimasu.","exampleBn":"বই রাখি।"},
+{"id":393,"kanji":"横","options":["পাশ","সামনে","পিছনে","উপরে"],"correctOption":"পাশ","reading":"よこ (Kun)","onyomi":"オウ (ou)","kunyomi":"よこ (yoko)","meaning":"পাশ","exampleJp":"横に並びます。","exampleRoma":"Yoko ni narabimasu.","exampleBn":"পাশে সারিবদ্ধ হই।"},
+{"id":394,"kanji":"向","options":["দিক","স্থান","সময়","ব্যক্তি"],"correctOption":"দিক","reading":"む(く) (Kun)","onyomi":"コウ (kou)","kunyomi":"む(く)・む(こう) (muku/mukou)","meaning":"দিক","exampleJp":"向こうへ行きます。","exampleRoma":"Mukou e ikimasu.","exampleBn":"ওদিকে যাই।"},
+{"id":395,"kanji":"原","options":["মাঠ","পাহাড়","নদী","সমুদ্র"],"correctOption":"মাঠ","reading":"はら (Kun)","onyomi":"ゲン (gen)","kunyomi":"はら (hara)","meaning":"মাঠ","exampleJp":"野原を歩きます。","exampleRoma":"Nohara o arukimasu.","exampleBn":"মাঠে হাঁটি।"},
+{"id":396,"kanji":"平","options":["সমতল","উঁচু","নিচু","খাড়া"],"correctOption":"সমতল","reading":"たい(ら) (Kun)","onyomi":"ヘイ・ビョウ (hei/byou)","kunyomi":"たい(ら)・ひら (taira/hira)","meaning":"সমতল","exampleJp":"平らな道です。","exampleRoma":"Taira na michi desu.","exampleBn":"সমতল পথ।"},
+{"id":397,"kanji":"野","options":["মাঠ","পাহাড়","নদী","সমুদ্র"],"correctOption":"মাঠ","reading":"の (Kun)","onyomi":"ヤ (ya)","kunyomi":"の (no)","meaning":"মাঠ","exampleJp":"野原を散歩します。","exampleRoma":"Nohara o sanpo shimasu.","exampleBn":"মাঠে হাঁটাহাঁটি করি।"},
+{"id":398,"kanji":"術","options":["শিল্প","বিজ্ঞান","গণিত","ভাষা"],"correctOption":"শিল্প","reading":"ジュツ (On)","onyomi":"ジュツ (jutsu)","kunyomi":"—","meaning":"শিল্প","exampleJp":"技術を学びます。","exampleRoma":"Gijutsu o manabimasu.","exampleBn":"প্রযুক্তি শিখি।"},
+{"id":399,"kanji":"退","options":["পিছু হটা","সামনে যাওয়া","থামা","অপেক্ষা করা"],"correctOption":"পিছু হটা","reading":"しりぞ(く) (Kun)","onyomi":"タイ (tai)","kunyomi":"しりぞ(く) (shirizoku)","meaning":"পিছু হটা","exampleJp":"退院しました。","exampleRoma":"Taiin shimashita.","exampleBn":"হাসপাতাল থেকে ছাড়া পেয়েছি।"},
+{"id":400,"kanji":"効","options":["কার্যকর হওয়া","নিষ্ক্রিয় হওয়া","থামা","চলা"],"correctOption":"কার্যকর হওয়া","reading":"き(く) (Kun)","onyomi":"コウ (kou)","kunyomi":"き(く) (kiku)","meaning":"কার্যকর হওয়া","exampleJp":"薬が効きます。","exampleRoma":"Kusuri ga kikimasu.","exampleBn":"ওষুধ কাজ করে।"},
+{"id":401,"kanji":"民","options":["জনগণ","রাজা","নেতা","সেনা"],"correctOption":"জনগণ","reading":"たみ (Kun)","onyomi":"ミン (min)","kunyomi":"たみ (tami)","meaning":"জনগণ","exampleJp":"国民です。","exampleRoma":"Kokumin desu.","exampleBn":"নাগরিক।"},
+{"id":402,"kanji":"訪","options":["পরিদর্শন করা","এড়িয়ে চলা","অপেক্ষা করা","ফিরে আসা"],"correctOption":"পরিদর্শন করা","reading":"たず(ねる) (Kun)","onyomi":"ホウ (hou)","kunyomi":"たず(ねる)・おとず(れる) (tazuneru/otozureru)","meaning":"পরিদর্শন করা","exampleJp":"友だちを訪ねます。","exampleRoma":"Tomodachi o tazunemasu.","exampleBn":"বন্ধুকে দেখতে যাই।"},
+{"id":403,"kanji":"顔","options":["মুখ","মাথা","হাত","পা"],"correctOption":"মুখ","reading":"かお (Kun)","onyomi":"ガン (gan)","kunyomi":"かお (kao)","meaning":"মুখ","exampleJp":"顔を洗います。","exampleRoma":"Kao o araimasu.","exampleBn":"মুখ ধুই।"},
+{"id":404,"kanji":"歯","options":["দাঁত","জিভ","ঠোঁট","গাল"],"correctOption":"দাঁত","reading":"は (Kun)","onyomi":"シ (shi)","kunyomi":"は (ha)","meaning":"দাঁত","exampleJp":"歯を磨きます。","exampleRoma":"Ha o migakimasu.","exampleBn":"দাঁত ব্রাশ করি।"},
+{"id":405,"kanji":"卒","options":["স্নাতক","ছাত্র","শিক্ষক","কর্মচারী"],"correctOption":"স্নাতক","reading":"ソツ (On)","onyomi":"ソツ (sotsu)","kunyomi":"—","meaning":"স্নাতক","exampleJp":"大学を卒業します。","exampleRoma":"Daigaku o sotsugyou shimasu.","exampleBn":"বিশ্ববিদ্যালয় থেকে স্নাতক হই।"},
+{"id":406,"kanji":"論","options":["আলোচনা","নীরবতা","বিরতি","থামা"],"correctOption":"আলোচনা","reading":"ロン (On)","onyomi":"ロン (ron)","kunyomi":"—","meaning":"আলোচনা","exampleJp":"論文を書きます。","exampleRoma":"Ronbun o kakimasu.","exampleBn":"থিসিস লিখি।"},
+{"id":407,"kanji":"実","options":["বাস্তব","কল্পনা","স্বপ্ন","মিথ্যা"],"correctOption":"বাস্তব","reading":"み (Kun)","onyomi":"ジツ (jitsu)","kunyomi":"み・みの(る) (mi/minoru)","meaning":"বাস্তব","exampleJp":"実は、知りません。","exampleRoma":"Jitsu wa, shirimasen.","exampleBn":"আসলে জানি না।"},
+{"id":408,"kanji":"調","options":["তদন্ত করা","গোপন করা","লুকানো","চাপা দেওয়া"],"correctOption":"তদন্ত করা","reading":"しら(べる) (Kun)","onyomi":"チョウ (chou)","kunyomi":"しら(べる)・ととの(う) (shiraberu/totonou)","meaning":"তদন্ত করা","exampleJp":"調査します。","exampleRoma":"Chousa shimasu.","exampleBn":"তদন্ত করি।"},
+{"id":409,"kanji":"必","options":["অবশ্যই","হয়তো","কখনো","কদাচিৎ"],"correctOption":"অবশ্যই","reading":"かなら(ず) (Kun)","onyomi":"ヒツ (hitsu)","kunyomi":"かなら(ず) (kanarazu)","meaning":"অবশ্যই","exampleJp":"必ず行きます。","exampleRoma":"Kanarazu ikimasu.","exampleBn":"অবশ্যই যাব।"},
+{"id":410,"kanji":"要","options":["প্রয়োজন","অপ্রয়োজনীয়","বাড়তি","অতিরিক্ত"],"correctOption":"প্রয়োজন","reading":"い(る) (Kun)","onyomi":"ヨウ (you)","kunyomi":"い(る) (iru)","meaning":"প্রয়োজন","exampleJp":"必要です。","exampleRoma":"Hitsuyou desu.","exampleBn":"প্রয়োজন।"},
+{"id":411,"kanji":"類","options":["প্রকার","সংখ্যা","আকার","রং"],"correctOption":"প্রকার","reading":"たぐ(い) (Kun)","onyomi":"ルイ (rui)","kunyomi":"たぐ(い) (tagui)","meaning":"প্রকার","exampleJp":"種類が多いです。","exampleRoma":"Shurui ga ooi desu.","exampleBn":"প্রকারভেদ বেশি।"},
+{"id":412,"kanji":"増","options":["বৃদ্ধি পাওয়া","হ্রাস পাওয়া","স্থির থাকা","থাকা"],"correctOption":"বৃদ্ধি পাওয়া","reading":"ふ(える) (Kun)","onyomi":"ゾウ (zou)","kunyomi":"ふ(える)・ふ(やす)・ま(す) (fueru/fuyasu/masu)","meaning":"বৃদ্ধি পাওয়া","exampleJp":"人口が増えます。","exampleRoma":"Jinkou ga fuemasu.","exampleBn":"জনসংখ্যা বাড়ছে।"},
+{"id":413,"kanji":"加","options":["যোগ করা","বিয়োগ করা","গুণ করা","ভাগ করা"],"correctOption":"যোগ করা","reading":"くわ(える) (Kun)","onyomi":"カ (ka)","kunyomi":"くわ(える)・くわ(わる) (kuwaeru/kuwaru)","meaning":"যোগ করা","exampleJp":"参加します。","exampleRoma":"Sanka shimasu.","exampleBn":"অংশগ্রহণ করি।"},
+{"id":414,"kanji":"減","options":["হ্রাস পাওয়া","বৃদ্ধি পাওয়া","স্থির থাকা","থাকা"],"correctOption":"হ্রাস পাওয়া","reading":"へ(る) (Kun)","onyomi":"ゲン (gen)","kunyomi":"へ(る)・へ(らす) (heru/herasu)","meaning":"হ্রাস পাওয়া","exampleJp":"人口が減ります。","exampleRoma":"Jinkou ga herimasu.","exampleBn":"জনসংখ্যা কমছে।"},
+{"id":415,"kanji":"変","options":["পরিবর্তন হওয়া","স্থির থাকা","থাকা","চলা"],"correctOption":"পরিবর্তন হওয়া","reading":"か(わる) (Kun)","onyomi":"ヘン (hen)","kunyomi":"か(わる)・か(える) (kawaru/kaeru)","meaning":"পরিবর্তন হওয়া","exampleJp":"天気が変わります。","exampleRoma":"Tenki ga kawarimasu.","exampleBn":"আবহাওয়া পরিবর্তন হয়।"},
+{"id":416,"kanji":"移","options":["সরানো","থামানো","চালানো","ভাঙা"],"correctOption":"সরানো","reading":"うつ(る) (Kun)","onyomi":"イ (i)","kunyomi":"うつ(る)・うつ(す) (utsuru/utsusu)","meaning":"সরানো","exampleJp":"引っ越しで移動します。","exampleRoma":"Hikkoshi de idou shimasu.","exampleBn":"বাড়ি বদলে স্থানান্তরিত হই।"},
+{"id":417,"kanji":"続","options":["চালিয়ে যাওয়া","থামা","শেষ করা","শুরু করা"],"correctOption":"চালিয়ে যাওয়া","reading":"つづ(く) (Kun)","onyomi":"ゾク (zoku)","kunyomi":"つづ(く)・つづ(ける) (tsuzuku/tsuzukeru)","meaning":"চালিয়ে যাওয়া","exampleJp":"勉強を続けます。","exampleRoma":"Benkyou o tsuzukemasu.","exampleBn":"পড়াশোনা চালিয়ে যাই।"},
+{"id":418,"kanji":"過","options":["অতিবাহিত হওয়া","থামা","শুরু হওয়া","শেষ হওয়া"],"correctOption":"অতিবাহিত হওয়া","reading":"す(ぎる) (Kun)","onyomi":"カ (ka)","kunyomi":"す(ぎる)・す(ごす) (sugiru/sugosu)","meaning":"অতিবাহিত হওয়া","exampleJp":"時間が過ぎます。","exampleRoma":"Jikan ga sugimasu.","exampleBn":"সময় অতিবাহিত হয়।"},
+{"id":419,"kanji":"比","options":["তুলনা করা","মিলানো","বিচ্ছিন্ন করা","ভাঙা"],"correctOption":"তুলনা করা","reading":"くら(べる) (Kun)","onyomi":"ヒ (hi)","kunyomi":"くら(べる) (kuraberu)","meaning":"তুলনা করা","exampleJp":"比べます。","exampleRoma":"Kurabemasu.","exampleBn":"তুলনা করি।"},
+{"id":420,"kanji":"較","options":["তুলনা করা","মিলানো","বিচ্ছিন্ন করা","ভাঙা"],"correctOption":"তুলনা করা","reading":"カク (On)","onyomi":"カク (kaku)","kunyomi":"—","meaning":"তুলনা করা","exampleJp":"比較します。","exampleRoma":"Hikaku shimasu.","exampleBn":"তুলনা করি।"},
+{"id":421,"kanji":"反","options":["বিপরীত","একই","সদৃশ","মিলিত"],"correctOption":"বিপরীত","reading":"そ(る) (Kun)","onyomi":"ハン (han)","kunyomi":"そ(る) (soru)","meaning":"বিপরীত","exampleJp":"反対します。","exampleRoma":"Hantai shimasu.","exampleBn":"বিরোধিতা করি।"},
+{"id":422,"kanji":"対","options":["বিরুদ্ধে","সপক্ষে","সাথে","একা"],"correctOption":"বিরুদ্ধে","reading":"タイ (On)","onyomi":"タイ・ツイ (tai/tsui)","kunyomi":"—","meaning":"বিরুদ্ধে","exampleJp":"反対します。","exampleRoma":"Hantai shimasu.","exampleBn":"বিরোধিতা করি।"},
+{"id":423,"kanji":"賛","options":["সমর্থন করা","বিরোধিতা করা","নীরব থাকা","থাকা"],"correctOption":"সমর্থন করা","reading":"サン (On)","onyomi":"サン (san)","kunyomi":"—","meaning":"সমর্থন করা","exampleJp":"賛成します。","exampleRoma":"Sansei shimasu.","exampleBn":"সমর্থন করি।"},
+{"id":424,"kanji":"共","options":["একসাথে","একা","আলাদা","বিচ্ছিন্ন"],"correctOption":"একসাথে","reading":"とも (Kun)","onyomi":"キョウ (kyou)","kunyomi":"とも (tomo)","meaning":"একসাথে","exampleJp":"共通の友だちです。","exampleRoma":"Kyoutsuu no tomodachi desu.","exampleBn":"সাধারণ বন্ধু।"},
+{"id":425,"kanji":"直","options":["সোজা","বাঁকা","গোল","চৌকো"],"correctOption":"সোজা","reading":"ただ(ちに) (Kun)","onyomi":"チョク・ジキ (choku/jiki)","kunyomi":"ただ(ちに)・なお(す) (tadachi ni/naosu)","meaning":"সোজা","exampleJp":"直線を引きます。","exampleRoma":"Chokusen o hikimasu.","exampleBn":"সরলরেখা টানি।"},
+{"id":426,"kanji":"表","options":["প্রকাশ করা","গোপন করা","লুকানো","চাপা দেওয়া"],"correctOption":"প্রকাশ করা","reading":"あらわ(す) (Kun)","onyomi":"ヒョウ (hyou)","kunyomi":"あらわ(す)・おもて (arawasu/omote)","meaning":"প্রকাশ করা","exampleJp":"発表します。","exampleRoma":"Happyou shimasu.","exampleBn":"ঘোষণা করি।"},
+{"id":427,"kanji":"現","options":["প্রকাশ পাওয়া","লুকানো","গোপন করা","চাপা দেওয়া"],"correctOption":"প্রকাশ পাওয়া","reading":"あらわ(れる) (Kun)","onyomi":"ゲン (gen)","kunyomi":"あらわ(れる)・あらわ(す) (arawareru/arawasu)","meaning":"প্রকাশ পাওয়া","exampleJp":"現れます。","exampleRoma":"Arawaremasu.","exampleBn":"প্রকাশ পায়।"},
+{"id":428,"kanji":"初","options":["প্রথম","শেষ","মাঝ","পরবর্তী"],"correctOption":"প্রথম","reading":"はじ(め) (Kun)","onyomi":"ショ (sho)","kunyomi":"はじ(め)・はつ・はじ(めて) (hajime/hatsu/hajimete)","meaning":"প্রথম","exampleJp":"初めて日本へ行きます。","exampleRoma":"Hajimete Nihon e ikimasu.","exampleBn":"প্রথমবার জাপান যাই।"},
+{"id":429,"kanji":"全","options":["সম্পূর্ণ","অসম্পূর্ণ","অর্ধেক","কিছু"],"correctOption":"সম্পূর্ণ","reading":"まった(く) (Kun)","onyomi":"ゼン (zen)","kunyomi":"まった(く) (mattaku)","meaning":"সম্পূর্ণ","exampleJp":"全部食べました。","exampleRoma":"Zenbu tabemashita.","exampleBn":"সব খেয়েছি।"},
+{"id":430,"kanji":"最","options":["সর্বাধিক","সর্বনিম্ন","মাঝারি","সাধারণ"],"correctOption":"সর্বাধিক","reading":"もっと(も) (Kun)","onyomi":"サイ (sai)","kunyomi":"もっと(も) (mottomo)","meaning":"সর্বাধিক","exampleJp":"最近、忙しいです。","exampleRoma":"Saikin, isogashii desu.","exampleBn":"সম্প্রতি ব্যস্ত আছি।"},
+{"id":431,"kanji":"無","options":["নেই","আছে","সব","কিছু"],"correctOption":"নেই","reading":"な(い) (Kun)","onyomi":"ム・ブ (mu/bu)","kunyomi":"な(い) (nai)","meaning":"নেই","exampleJp":"無料です。","exampleRoma":"Muryou desu.","exampleBn":"বিনামূল্যে।"},
+{"id":432,"kanji":"非","options":["নয়","হ্যাঁ","সব","কিছু"],"correctOption":"নয়","reading":"ヒ (On)","onyomi":"ヒ (hi)","kunyomi":"—","meaning":"নয়","exampleJp":"非常口です。","exampleRoma":"Hijouguchi desu.","exampleBn":"জরুরি বহির্গমন পথ।"},
+{"id":433,"kanji":"第","options":["ক্রম","শেষ","প্রথম","সব"],"correctOption":"ক্রম","reading":"ダイ (On)","onyomi":"ダイ (dai)","kunyomi":"—","meaning":"ক্রম","exampleJp":"第一課です。","exampleRoma":"Daiikka desu.","exampleBn":"প্রথম পাঠ।"},
+{"id":434,"kanji":"的","options":["লক্ষ্য","উৎস","ফল","কারণ"],"correctOption":"লক্ষ্য","reading":"テキ (On)","onyomi":"テキ (teki)","kunyomi":"まと (mato)","meaning":"লক্ষ্য","exampleJp":"目的があります。","exampleRoma":"Mokuteki ga arimasu.","exampleBn":"লক্ষ্য আছে।"},
+{"id":435,"kanji":"性","options":["প্রকৃতি","সংখ্যা","আকার","রং"],"correctOption":"প্রকৃতি","reading":"セイ・ショウ (On)","onyomi":"セイ・ショウ (sei/shou)","kunyomi":"—","meaning":"প্রকৃতি","exampleJp":"性格がいいです。","exampleRoma":"Seikaku ga ii desu.","exampleBn":"স্বভাব ভালো।"},
+{"id":436,"kanji":"法","options":["আইন","বিধি","শৃঙ্খলা","ব্যবস্থা"],"correctOption":"আইন","reading":"ホウ (On)","onyomi":"ホウ・ハッ (hou/hap)","kunyomi":"—","meaning":"আইন","exampleJp":"法律を守ります。","exampleRoma":"Houritsu o mamorimasu.","exampleBn":"আইন মেনে চলি।"},
+{"id":437,"kanji":"制","options":["নিয়ন্ত্রণ","স্বাধীনতা","মুক্তি","ছাড়"],"correctOption":"নিয়ন্ত্রণ","reading":"セイ (On)","onyomi":"セイ (sei)","kunyomi":"—","meaning":"নিয়ন্ত্রণ","exampleJp":"制度があります。","exampleRoma":"Seido ga arimasu.","exampleBn":"ব্যবস্থা আছে।"},
+{"id":438,"kanji":"課","options":["পাঠ","অধ্যায়","বিভাগ","শ্রেণি"],"correctOption":"পাঠ","reading":"カ (On)","onyomi":"カ (ka)","kunyomi":"—","meaning":"পাঠ","exampleJp":"第一課を勉強します。","exampleRoma":"Daiikka o benkyou shimasu.","exampleBn":"প্রথম পাঠ পড়ি।"},
+{"id":439,"kanji":"成","options":["পরিণত হওয়া","ভাঙা","ছিঁড়া","ফেলে দেওয়া"],"correctOption":"পরিণত হওয়া","reading":"な(る) (Kun)","onyomi":"セイ・ジョウ (sei/jou)","kunyomi":"な(る)・な(す) (naru/nasu)","meaning":"পরিণত হওয়া","exampleJp":"成功しました。","exampleRoma":"Seikou shimashita.","exampleBn":"সফল হয়েছি।"},
+{"id":440,"kanji":"費","options":["খরচ","আয়","সঞ্চয়","ঋণ"],"correctOption":"খরচ","reading":"つい(やす) (Kun)","onyomi":"ヒ (hi)","kunyomi":"つい(やす) (tsuiyasu)","meaning":"খরচ","exampleJp":"費用がかかります。","exampleRoma":"Hiyou ga kakarimasu.","exampleBn":"খরচ হয়।"},
+{"id":441,"kanji":"放","options":["ছেড়ে দেওয়া","ধরা","বন্দী করা","আটকানো"],"correctOption":"ছেড়ে দেওয়া","reading":"はな(す) (Kun)","onyomi":"ホウ (hou)","kunyomi":"はな(す)・はな(つ) (hanasu/hanatsu)","meaning":"ছেড়ে দেওয়া","exampleJp":"放送します。","exampleRoma":"Housou shimasu.","exampleBn":"সম্প্রচার করি।"},
+{"id":442,"kanji":"位","options":["পদ","স্থান","সময়","ব্যক্তি"],"correctOption":"পদ","reading":"くらい (Kun)","onyomi":"イ (i)","kunyomi":"くらい (kurai)","meaning":"পদ","exampleJp":"一位になりました。","exampleRoma":"Ichii ni narimashita.","exampleBn":"প্রথম হয়েছি।"},
+{"id":443,"kanji":"置","options":["রাখা","তোলা","ফেলা","ছোড়া"],"correctOption":"রাখা","reading":"お(く) (Kun)","onyomi":"チ (chi)","kunyomi":"お(く) (oku)","meaning":"রাখা","exampleJp":"本を置きます。","exampleRoma":"Hon o okimasu.","exampleBn":"বই রাখি।"},
+{"id":444,"kanji":"横","options":["পাশ","সামনে","পিছনে","উপরে"],"correctOption":"পাশ","reading":"よこ (Kun)","onyomi":"オウ (ou)","kunyomi":"よこ (yoko)","meaning":"পাশ","exampleJp":"横に並びます。","exampleRoma":"Yoko ni narabimasu.","exampleBn":"পাশে সারিবদ্ধ হই।"},
+{"id":445,"kanji":"向","options":["দিক","স্থান","সময়","ব্যক্তি"],"correctOption":"দিক","reading":"む(く) (Kun)","onyomi":"コウ (kou)","kunyomi":"む(く)・む(こう) (muku/mukou)","meaning":"দিক","exampleJp":"向こうへ行きます。","exampleRoma":"Mukou e ikimasu.","exampleBn":"ওদিকে যাই।"},
+{"id":446,"kanji":"原","options":["মাঠ","পাহাড়","নদী","সমুদ্র"],"correctOption":"মাঠ","reading":"はら (Kun)","onyomi":"ゲン (gen)","kunyomi":"はら (hara)","meaning":"মাঠ","exampleJp":"野原を歩きます。","exampleRoma":"Nohara o arukimasu.","exampleBn":"মাঠে হাঁটি।"},
+{"id":447,"kanji":"平","options":["সমতল","উঁচু","নিচু","খাড়া"],"correctOption":"সমতল","reading":"たい(ら) (Kun)","onyomi":"ヘイ・ビョウ (hei/byou)","kunyomi":"たい(ら)・ひら (taira/hira)","meaning":"সমতল","exampleJp":"平らな道です。","exampleRoma":"Taira na michi desu.","exampleBn":"সমতল পথ।"},
+{"id":448,"kanji":"野","options":["মাঠ","পাহাড়","নদী","সমুদ্র"],"correctOption":"মাঠ","reading":"の (Kun)","onyomi":"ヤ (ya)","kunyomi":"の (no)","meaning":"মাঠ","exampleJp":"野原を散歩します。","exampleRoma":"Nohara o sanpo shimasu.","exampleBn":"মাঠে হাঁটাহাঁটি করি।"},
+{"id":449,"kanji":"術","options":["শিল্প","বিজ্ঞান","গণিত","ভাষা"],"correctOption":"শিল্প","reading":"ジュツ (On)","onyomi":"ジュツ (jutsu)","kunyomi":"—","meaning":"শিল্প","exampleJp":"技術を学びます。","exampleRoma":"Gijutsu o manabimasu.","exampleBn":"প্রযুক্তি শিখি।"},
+{"id":450,"kanji":"退","options":["পিছু হটা","সামনে যাওয়া","থামা","অপেক্ষা করা"],"correctOption":"পিছু হটা","reading":"しりぞ(く) (Kun)","onyomi":"タイ (tai)","kunyomi":"しりぞ(く) (shirizoku)","meaning":"পিছু হটা","exampleJp":"退院しました。","exampleRoma":"Taiin shimashita.","exampleBn":"হাসপাতাল থেকে ছাড়া পেয়েছি।"},
+{"id":451,"kanji":"効","options":["কার্যকর হওয়া","নিষ্ক্রিয় হওয়া","থামা","চলা"],"correctOption":"কার্যকর হওয়া","reading":"き(く) (Kun)","onyomi":"コウ (kou)","kunyomi":"き(く) (kiku)","meaning":"কার্যকর হওয়া","exampleJp":"薬が効きます。","exampleRoma":"Kusuri ga kikimasu.","exampleBn":"ওষুধ কাজ করে।"},
+{"id":452,"kanji":"民","options":["জনগণ","রাজা","নেতা","সেনা"],"correctOption":"জনগণ","reading":"たみ (Kun)","onyomi":"ミン (min)","kunyomi":"たみ (tami)","meaning":"জনগণ","exampleJp":"国民です。","exampleRoma":"Kokumin desu.","exampleBn":"নাগরিক।"},
+{"id":453,"kanji":"訪","options":["পরিদর্শন করা","এড়িয়ে চলা","অপেক্ষা করা","ফিরে আসা"],"correctOption":"পরিদর্শন করা","reading":"たず(ねる) (Kun)","onyomi":"ホウ (hou)","kunyomi":"たず(ねる)・おとず(れる) (tazuneru/otozureru)","meaning":"পরিদর্শন করা","exampleJp":"友だちを訪ねます。","exampleRoma":"Tomodachi o tazunemasu.","exampleBn":"বন্ধুকে দেখতে যাই।"},
+{"id":454,"kanji":"顔","options":["মুখ","মাথা","হাত","পা"],"correctOption":"মুখ","reading":"かお (Kun)","onyomi":"ガン (gan)","kunyomi":"かお (kao)","meaning":"মুখ","exampleJp":"顔を洗います。","exampleRoma":"Kao o araimasu.","exampleBn":"মুখ ধুই।"},
+{"id":455,"kanji":"歯","options":["দাঁত","জিভ","ঠোঁট","গাল"],"correctOption":"দাঁত","reading":"は (Kun)","onyomi":"シ (shi)","kunyomi":"は (ha)","meaning":"দাঁত","exampleJp":"歯を磨きます。","exampleRoma":"Ha o migakimasu.","exampleBn":"দাঁত ব্রাশ করি।"},
+{"id":456,"kanji":"卒","options":["স্নাতক","ছাত্র","শিক্ষক","কর্মচারী"],"correctOption":"স্নাতক","reading":"ソツ (On)","onyomi":"ソツ (sotsu)","kunyomi":"—","meaning":"স্নাতক","exampleJp":"大学を卒業します。","exampleRoma":"Daigaku o sotsugyou shimasu.","exampleBn":"বিশ্ববিদ্যালয় থেকে স্নাতক হই।"},
+{"id":457,"kanji":"論","options":["আলোচনা","নীরবতা","বিরতি","থামা"],"correctOption":"আলোচনা","reading":"ロン (On)","onyomi":"ロン (ron)","kunyomi":"—","meaning":"আলোচনা","exampleJp":"論文を書きます。","exampleRoma":"Ronbun o kakimasu.","exampleBn":"থিসিস লিখি।"},
+{"id":458,"kanji":"実","options":["বাস্তব","কল্পনা","স্বপ্ন","মিথ্যা"],"correctOption":"বাস্তব","reading":"み (Kun)","onyomi":"ジツ (jitsu)","kunyomi":"み・みの(る) (mi/minoru)","meaning":"বাস্তব","exampleJp":"実は、知りません。","exampleRoma":"Jitsu wa, shirimasen.","exampleBn":"আসলে জানি না।"},
+{"id":459,"kanji":"調","options":["তদন্ত করা","গোপন করা","লুকানো","চাপা দেওয়া"],"correctOption":"তদন্ত করা","reading":"しら(べる) (Kun)","onyomi":"チョウ (chou)","kunyomi":"しら(べる)・ととの(う) (shiraberu/totonou)","meaning":"তদন্ত করা","exampleJp":"調査します。","exampleRoma":"Chousa shimasu.","exampleBn":"তদন্ত করি।"},
+{"id":460,"kanji":"必","options":["অবশ্যই","হয়তো","কখনো","কদাচিৎ"],"correctOption":"অবশ্যই","reading":"かなら(ず) (Kun)","onyomi":"ヒツ (hitsu)","kunyomi":"かなら(ず) (kanarazu)","meaning":"অবশ্যই","exampleJp":"必ず行きます。","exampleRoma":"Kanarazu ikimasu.","exampleBn":"অবশ্যই যাব।"},
+{"id":461,"kanji":"要","options":["প্রয়োজন","অপ্রয়োজনীয়","বাড়তি","অতিরিক্ত"],"correctOption":"প্রয়োজন","reading":"い(る) (Kun)","onyomi":"ヨウ (you)","kunyomi":"い(る) (iru)","meaning":"প্রয়োজন","exampleJp":"必要です。","exampleRoma":"Hitsuyou desu.","exampleBn":"প্রয়োজন।"},
+{"id":462,"kanji":"類","options":["প্রকার","সংখ্যা","আকার","রং"],"correctOption":"প্রকার","reading":"たぐ(い) (Kun)","onyomi":"ルイ (rui)","kunyomi":"たぐ(い) (tagui)","meaning":"প্রকার","exampleJp":"種類が多いです。","exampleRoma":"Shurui ga ooi desu.","exampleBn":"প্রকারভেদ বেশি।"},
+{"id":463,"kanji":"増","options":["বৃদ্ধি পাওয়া","হ্রাস পাওয়া","স্থির থাকা","থাকা"],"correctOption":"বৃদ্ধি পাওয়া","reading":"ふ(える) (Kun)","onyomi":"ゾウ (zou)","kunyomi":"ふ(える)・ふ(やす)・ま(す) (fueru/fuyasu/masu)","meaning":"বৃদ্ধি পাওয়া","exampleJp":"人口が増えます。","exampleRoma":"Jinkou ga fuemasu.","exampleBn":"জনসংখ্যা বাড়ছে।"},
+{"id":464,"kanji":"加","options":["যোগ করা","বিয়োগ করা","গুণ করা","ভাগ করা"],"correctOption":"যোগ করা","reading":"くわ(える) (Kun)","onyomi":"カ (ka)","kunyomi":"くわ(える)・くわ(わる) (kuwaeru/kuwaru)","meaning":"যোগ করা","exampleJp":"参加します。","exampleRoma":"Sanka shimasu.","exampleBn":"অংশগ্রহণ করি।"},
+{"id":465,"kanji":"減","options":["হ্রাস পাওয়া","বৃদ্ধি পাওয়া","স্থির থাকা","থাকা"],"correctOption":"হ্রাস পাওয়া","reading":"へ(る) (Kun)","onyomi":"ゲン (gen)","kunyomi":"へ(る)・へ(らす) (heru/herasu)","meaning":"হ্রাস পাওয়া","exampleJp":"人口が減ります。","exampleRoma":"Jinkou ga herimasu.","exampleBn":"জনসংখ্যা কমছে।"},
+{"id":466,"kanji":"変","options":["পরিবর্তন হওয়া","স্থির থাকা","থাকা","চলা"],"correctOption":"পরিবর্তন হওয়া","reading":"か(わる) (Kun)","onyomi":"ヘン (hen)","kunyomi":"か(わる)・か(える) (kawaru/kaeru)","meaning":"পরিবর্তন হওয়া","exampleJp":"天気が変わります。","exampleRoma":"Tenki ga kawarimasu.","exampleBn":"আবহাওয়া পরিবর্তন হয়।"},
+{"id":467,"kanji":"移","options":["সরানো","থামানো","চালানো","ভাঙা"],"correctOption":"সরানো","reading":"うつ(る) (Kun)","onyomi":"イ (i)","kunyomi":"うつ(る)・うつ(す) (utsuru/utsusu)","meaning":"সরানো","exampleJp":"引っ越しで移動します。","exampleRoma":"Hikkoshi de idou shimasu.","exampleBn":"বাড়ি বদলে স্থানান্তরিত হই।"},
+{"id":468,"kanji":"続","options":["চালিয়ে যাওয়া","থামা","শেষ করা","শুরু করা"],"correctOption":"চালিয়ে যাওয়া","reading":"つづ(く) (Kun)","onyomi":"ゾク (zoku)","kunyomi":"つづ(く)・つづ(ける) (tsuzuku/tsuzukeru)","meaning":"চালিয়ে যাওয়া","exampleJp":"勉強を続けます。","exampleRoma":"Benkyou o tsuzukemasu.","exampleBn":"পড়াশোনা চালিয়ে যাই।"},
+{"id":469,"kanji":"過","options":["অতিবাহিত হওয়া","থামা","শুরু হওয়া","শেষ হওয়া"],"correctOption":"অতিবাহিত হওয়া","reading":"す(ぎる) (Kun)","onyomi":"カ (ka)","kunyomi":"す(ぎる)・す(ごす) (sugiru/sugosu)","meaning":"অতিবাহিত হওয়া","exampleJp":"時間が過ぎます。","exampleRoma":"Jikan ga sugimasu.","exampleBn":"সময় অতিবাহিত হয়।"},
+{"id":470,"kanji":"比","options":["তুলনা করা","মিলানো","বিচ্ছিন্ন করা","ভাঙা"],"correctOption":"তুলনা করা","reading":"くら(べる) (Kun)","onyomi":"ヒ (hi)","kunyomi":"くら(べる) (kuraberu)","meaning":"তুলনা করা","exampleJp":"比べます。","exampleRoma":"Kurabemasu.","exampleBn":"তুলনা করি।"},
+{"id":471,"kanji":"較","options":["তুলনা করা","মিলানো","বিচ্ছিন্ন করা","ভাঙা"],"correctOption":"তুলনা করা","reading":"カク (On)","onyomi":"カク (kaku)","kunyomi":"—","meaning":"তুলনা করা","exampleJp":"比較します。","exampleRoma":"Hikaku shimasu.","exampleBn":"তুলনা করি।"},
+{"id":472,"kanji":"反","options":["বিপরীত","একই","সদৃশ","মিলিত"],"correctOption":"বিপরীত","reading":"そ(る) (Kun)","onyomi":"ハン (han)","kunyomi":"そ(る) (soru)","meaning":"বিপরীত","exampleJp":"反対します。","exampleRoma":"Hantai shimasu.","exampleBn":"বিরোধিতা করি।"},
+{"id":473,"kanji":"対","options":["বিরুদ্ধে","সপক্ষে","সাথে","একা"],"correctOption":"বিরুদ্ধে","reading":"タイ (On)","onyomi":"タイ・ツイ (tai/tsui)","kunyomi":"—","meaning":"বিরুদ্ধে","exampleJp":"反対します。","exampleRoma":"Hantai shimasu.","exampleBn":"বিরোধিতা করি।"},
+{"id":474,"kanji":"賛","options":["সমর্থন করা","বিরোধিতা করা","নীরব থাকা","থাকা"],"correctOption":"সমর্থন করা","reading":"サン (On)","onyomi":"サン (san)","kunyomi":"—","meaning":"সমর্থন করা","exampleJp":"賛成します。","exampleRoma":"Sansei shimasu.","exampleBn":"সমর্থন করি।"},
+{"id":475,"kanji":"共","options":["একসাথে","একা","আলাদা","বিচ্ছিন্ন"],"correctOption":"একসাথে","reading":"とも (Kun)","onyomi":"キョウ (kyou)","kunyomi":"とも (tomo)","meaning":"একসাথে","exampleJp":"共通の友だちです。","exampleRoma":"Kyoutsuu no tomodachi desu.","exampleBn":"সাধারণ বন্ধু।"},
+{"id":476,"kanji":"直","options":["সোজা","বাঁকা","গোল","চৌকো"],"correctOption":"সোজা","reading":"ただ(ちに) (Kun)","onyomi":"チョク・ジキ (choku/jiki)","kunyomi":"ただ(ちに)・なお(す) (tadachi ni/naosu)","meaning":"সোজা","exampleJp":"直線を引きます。","exampleRoma":"Chokusen o hikimasu.","exampleBn":"সরলরেখা টানি।"},
+{"id":477,"kanji":"表","options":["প্রকাশ করা","গোপন করা","লুকানো","চাপা দেওয়া"],"correctOption":"প্রকাশ করা","reading":"あらわ(す) (Kun)","onyomi":"ヒョウ (hyou)","kunyomi":"あらわ(す)・おもて (arawasu/omote)","meaning":"প্রকাশ করা","exampleJp":"発表します。","exampleRoma":"Happyou shimasu.","exampleBn":"ঘোষণা করি।"},
+{"id":478,"kanji":"現","options":["প্রকাশ পাওয়া","লুকানো","গোপন করা","চাপা দেওয়া"],"correctOption":"প্রকাশ পাওয়া","reading":"あらわ(れる) (Kun)","onyomi":"ゲン (gen)","kunyomi":"あらわ(れる)・あらわ(す) (arawareru/arawasu)","meaning":"প্রকাশ পাওয়া","exampleJp":"現れます。","exampleRoma":"Arawaremasu.","exampleBn":"প্রকাশ পায়।"},
+{"id":479,"kanji":"初","options":["প্রথম","শেষ","মাঝ","পরবর্তী"],"correctOption":"প্রথম","reading":"はじ(め) (Kun)","onyomi":"ショ (sho)","kunyomi":"はじ(め)・はつ・はじ(めて) (hajime/hatsu/hajimete)","meaning":"প্রথম","exampleJp":"初めて日本へ行きます。","exampleRoma":"Hajimete Nihon e ikimasu.","exampleBn":"প্রথমবার জাপান যাই।"},
+{"id":480,"kanji":"全","options":["সম্পূর্ণ","অসম্পূর্ণ","অর্ধেক","কিছু"],"correctOption":"সম্পূর্ণ","reading":"まった(く) (Kun)","onyomi":"ゼン (zen)","kunyomi":"まった(く) (mattaku)","meaning":"সম্পূর্ণ","exampleJp":"全部食べました。","exampleRoma":"Zenbu tabemashita.","exampleBn":"সব খেয়েছি।"},
+{"id":481,"kanji":"最","options":["সর্বাধিক","সর্বনিম্ন","মাঝারি","সাধারণ"],"correctOption":"সর্বাধিক","reading":"もっと(も) (Kun)","onyomi":"サイ (sai)","kunyomi":"もっと(も) (mottomo)","meaning":"সর্বাধিক","exampleJp":"最近、忙しいです。","exampleRoma":"Saikin, isogashii desu.","exampleBn":"সম্প্রতি ব্যস্ত আছি।"},
+{"id":482,"kanji":"無","options":["নেই","আছে","সব","কিছু"],"correctOption":"নেই","reading":"な(い) (Kun)","onyomi":"ム・ブ (mu/bu)","kunyomi":"な(い) (nai)","meaning":"নেই","exampleJp":"無料です。","exampleRoma":"Muryou desu.","exampleBn":"বিনামূল্যে।"},
+{"id":483,"kanji":"非","options":["নয়","হ্যাঁ","সব","কিছু"],"correctOption":"নয়","reading":"ヒ (On)","onyomi":"ヒ (hi)","kunyomi":"—","meaning":"নয়","exampleJp":"非常口です。","exampleRoma":"Hijouguchi desu.","exampleBn":"জরুরি বহির্গমন পথ।"},
+{"id":484,"kanji":"第","options":["ক্রম","শেষ","প্রথম","সব"],"correctOption":"ক্রম","reading":"ダイ (On)","onyomi":"ダイ (dai)","kunyomi":"—","meaning":"ক্রম","exampleJp":"第一課です。","exampleRoma":"Daiikka desu.","exampleBn":"প্রথম পাঠ।"},
+{"id":485,"kanji":"的","options":["লক্ষ্য","উৎস","ফল","কারণ"],"correctOption":"লক্ষ্য","reading":"テキ (On)","onyomi":"テキ (teki)","kunyomi":"まと (mato)","meaning":"লক্ষ্য","exampleJp":"目的があります。","exampleRoma":"Mokuteki ga arimasu.","exampleBn":"লক্ষ্য আছে।"},
+{"id":486,"kanji":"性","options":["প্রকৃতি","সংখ্যা","আকার","রং"],"correctOption":"প্রকৃতি","reading":"セイ・ショウ (On)","onyomi":"セイ・ショウ (sei/shou)","kunyomi":"—","meaning":"প্রকৃতি","exampleJp":"性格がいいです。","exampleRoma":"Seikaku ga ii desu.","exampleBn":"স্বভাব ভালো।"},
+{"id":487,"kanji":"法","options":["আইন","বিধি","শৃঙ্খলা","ব্যবস্থা"],"correctOption":"আইন","reading":"ホウ (On)","onyomi":"ホウ・ハッ (hou/hap)","kunyomi":"—","meaning":"আইন","exampleJp":"法律を守ります。","exampleRoma":"Houritsu o mamorimasu.","exampleBn":"আইন মেনে চলি।"},
+{"id":488,"kanji":"制","options":["নিয়ন্ত্রণ","স্বাধীনতা","মুক্তি","ছাড়"],"correctOption":"নিয়ন্ত্রণ","reading":"セイ (On)","onyomi":"セイ (sei)","kunyomi":"—","meaning":"নিয়ন্ত্রণ","exampleJp":"制度があります。","exampleRoma":"Seido ga arimasu.","exampleBn":"ব্যবস্থা আছে।"},
+{"id":489,"kanji":"課","options":["পাঠ","অধ্যায়","বিভাগ","শ্রেণি"],"correctOption":"পাঠ","reading":"カ (On)","onyomi":"カ (ka)","kunyomi":"—","meaning":"পাঠ","exampleJp":"第一課を勉強します。","exampleRoma":"Daiikka o benkyou shimasu.","exampleBn":"প্রথম পাঠ পড়ি।"},
+{"id":490,"kanji":"成","options":["পরিণত হওয়া","ভাঙা","ছিঁড়া","ফেলে দেওয়া"],"correctOption":"পরিণত হওয়া","reading":"な(る) (Kun)","onyomi":"セイ・ジョウ (sei/jou)","kunyomi":"な(る)・な(す) (naru/nasu)","meaning":"পরিণত হওয়া","exampleJp":"成功しました。","exampleRoma":"Seikou shimashita.","exampleBn":"সফল হয়েছি।"},
+{"id":491,"kanji":"費","options":["খরচ","আয়","সঞ্চয়","ঋণ"],"correctOption":"খরচ","reading":"つい(やす) (Kun)","onyomi":"ヒ (hi)","kunyomi":"つい(やす) (tsuiyasu)","meaning":"খরচ","exampleJp":"費用がかかります。","exampleRoma":"Hiyou ga kakarimasu.","exampleBn":"খরচ হয়।"},
+{"id":492,"kanji":"放","options":["ছেড়ে দেওয়া","ধরা","বন্দী করা","আটকানো"],"correctOption":"ছেড়ে দেওয়া","reading":"はな(す) (Kun)","onyomi":"ホウ (hou)","kunyomi":"はな(す)・はな(つ) (hanasu/hanatsu)","meaning":"ছেড়ে দেওয়া","exampleJp":"放送します。","exampleRoma":"Housou shimasu.","exampleBn":"সম্প্রচার করি।"},
+{"id":493,"kanji":"位","options":["পদ","স্থান","সময়","ব্যক্তি"],"correctOption":"পদ","reading":"くらい (Kun)","onyomi":"イ (i)","kunyomi":"くらい (kurai)","meaning":"পদ","exampleJp":"一位になりました。","exampleRoma":"Ichii ni narimashita.","exampleBn":"প্রথম হয়েছি।"},
+{"id":494,"kanji":"置","options":["রাখা","তোলা","ফেলা","ছোড়া"],"correctOption":"রাখা","reading":"お(く) (Kun)","onyomi":"チ (chi)","kunyomi":"お(く) (oku)","meaning":"রাখা","exampleJp":"本を置きます。","exampleRoma":"Hon o okimasu.","exampleBn":"বই রাখি।"},
+{"id":495,"kanji":"横","options":["পাশ","সামনে","পিছনে","উপরে"],"correctOption":"পাশ","reading":"よこ (Kun)","onyomi":"オウ (ou)","kunyomi":"よこ (yoko)","meaning":"পাশ","exampleJp":"横に並びます。","exampleRoma":"Yoko ni narabimasu.","exampleBn":"পাশে সারিবদ্ধ হই।"},
+{"id":496,"kanji":"向","options":["দিক","স্থান","সময়","ব্যক্তি"],"correctOption":"দিক","reading":"む(く) (Kun)","onyomi":"コウ (kou)","kunyomi":"む(く)・む(こう) (muku/mukou)","meaning":"দিক","exampleJp":"向こうへ行きます。","exampleRoma":"Mukou e ikimasu.","exampleBn":"ওদিকে যাই।"},
+{"id":497,"kanji":"原","options":["মাঠ","পাহাড়","নদী","সমুদ্র"],"correctOption":"মাঠ","reading":"はら (Kun)","onyomi":"ゲン (gen)","kunyomi":"はら (hara)","meaning":"মাঠ","exampleJp":"野原を歩きます。","exampleRoma":"Nohara o arukimasu.","exampleBn":"মাঠে হাঁটি।"},
+{"id":498,"kanji":"平","options":["সমতল","উঁচু","নিচু","খাড়া"],"correctOption":"সমতল","reading":"たい(ら) (Kun)","onyomi":"ヘイ・ビョウ (hei/byou)","kunyomi":"たい(ら)・ひら (taira/hira)","meaning":"সমতল","exampleJp":"平らな道です。","exampleRoma":"Taira na michi desu.","exampleBn":"সমতল পথ।"},
+{"id":499,"kanji":"野","options":["মাঠ","পাহাড়","নদী","সমুদ্র"],"correctOption":"মাঠ","reading":"の (Kun)","onyomi":"ヤ (ya)","kunyomi":"の (no)","meaning":"মাঠ","exampleJp":"野原を散歩します。","exampleRoma":"Nohara o sanpo shimasu.","exampleBn":"মাঠে হাঁটাহাঁটি করি।"},
+{"id":500,"kanji":"術","options":["শিল্প","বিজ্ঞান","গণিত","ভাষা"],"correctOption":"শিল্প","reading":"ジュツ (On)","onyomi":"ジュツ (jutsu)","kunyomi":"—","meaning":"শিল্প","exampleJp":"技術を学びます。","exampleRoma":"Gijutsu o manabimasu.","exampleBn":"প্রযুক্তি শিখি।"}
+];
+
+/* =========================================================
+   Helpers
+   ========================================================= */
+const BN_DIGITS = "০১২৩৪৫৬৭৮৯";
+const bn = n => String(n).replace(/\d/g, d => BN_DIGITS[+d]);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const kanaOnly = s => String(s || '').replace(/\([^)]*\)/g, '').replace(/[-–—]/g, ' ').replace(/\s+/g, ' ').trim();
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP';
+  u.rate = 0.85;
+  try{ speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
+}
+
+/* =========================================================
+   State + localStorage
+   ========================================================= */
+const STORAGE_KEY = 'kanji_quiz_500_state_v1';
+const card = document.getElementById('card');
+
+let QUESTIONS = [];
+let results   = [];
+let selectedIdx = [];
+let idx = 0, score = 0, answered = false;
+
+function prepareQuestions(){
+  QUESTIONS = shuffle(DATA).map(q => {
+    const opts = shuffle(q.options);
+    return Object.assign({}, q, {
+      opts,
+      correctIdx: opts.indexOf(q.correctOption)
+    });
+  });
+  results     = new Array(QUESTIONS.length).fill(null);
+  selectedIdx = new Array(QUESTIONS.length).fill(null);
+  idx = 0;
+  score = 0;
+  answered = false;
+}
+
+/* Progress saved in localStorage; refreshed on every answer */
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      order: QUESTIONS.map(q => q.id),
+      results, selectedIdx, idx, score
+    }));
+  }catch(e){}
+}
+
+function tryRestoreState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return false;
+    const data = JSON.parse(raw);
+    if(!data || !Array.isArray(data.order) || data.order.length !== DATA.length) return false;
+
+    const byId = new Map(DATA.map(q => [q.id, q]));
+    const ordered = [];
+    for(const id of data.order){
+      const src = byId.get(id);
+      if(!src) return false;
+      // re-shuffle options deterministically-ish per session; keep them stable by id order
+      const opts = src.options.slice();
+      // use the same shuffle as when stored? we don't store options order,
+      // so we shuffle again but ensure correctIdx points to correctOption:
+      const shuffled = shuffle(opts);
+      ordered.push(Object.assign({}, src, {
+        opts: shuffled,
+        correctIdx: shuffled.indexOf(src.correctOption)
+      }));
+    }
+    QUESTIONS = ordered;
+    results     = data.results.slice();
+    selectedIdx = data.selectedIdx.slice();
+    idx         = Math.min(Math.max(0, data.idx | 0), QUESTIONS.length - 1);
+    score       = data.score | 0;
+    return true;
+  }catch(e){ return false; }
+}
+
+function clearState(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+}
+
+/* =========================================================
+   Progress helpers
+   ========================================================= */
+function computeStats(){
+  const attempted  = results.filter(r => r !== null).length;
+  const correctCnt = results.filter(r => r === 'correct').length;
+  const wrongCnt   = results.filter(r => r === 'wrong').length;
+  const remaining  = QUESTIONS.length - attempted;
+  return { attempted, correctCnt, wrongCnt, remaining };
+}
+
+function segmentsHTML(){
+  return results.map((r, i) => {
+    let cls = 'seg';
+    if(r === 'correct')      cls += ' correct';
+    else if(r === 'wrong')   cls += ' wrong';
+    else if(i === idx)       cls += ' now';
+    return `<i class="${cls}" data-idx="${i}" title="প্রশ্ন ${i + 1}"></i>`;
+  }).join('');
+}
+
+function metaHTML(){
+  const { attempted, correctCnt, wrongCnt, remaining } = computeStats();
+  return `
+    <span class="pm">সম্পন্ন <b id="stat-attempted">${bn(attempted)}</b> / ${bn(QUESTIONS.length)}</span>
+    <span class="pm">বাকি <b id="stat-remaining">${bn(remaining)}</b></span>
+    <span class="pills">
+      <span class="pill ok">✓ <span id="stat-correct">${bn(correctCnt)}</span></span>
+      <span class="pill no">✕ <span id="stat-wrong">${bn(wrongCnt)}</span></span>
+    </span>
+  `;
+}
+
+function refreshProgress(){
+  const { attempted, correctCnt, wrongCnt, remaining } = computeStats();
+  const $ = id => document.getElementById(id);
+  if($('stat-attempted'))  $('stat-attempted').textContent  = bn(attempted);
+  if($('stat-remaining'))  $('stat-remaining').textContent  = bn(remaining);
+  if($('stat-correct'))    $('stat-correct').textContent    = bn(correctCnt);
+  if($('stat-wrong'))      $('stat-wrong').textContent      = bn(wrongCnt);
+
+  const segs = document.querySelectorAll('.seg');
+  segs.forEach((seg, i) => {
+    seg.classList.remove('now','correct','wrong');
+    const r = results[i];
+    if(r === 'correct')    seg.classList.add('correct');
+    else if(r === 'wrong') seg.classList.add('wrong');
+    else if(i === idx)     seg.classList.add('now');
+  });
+}
+
+/* =========================================================
+   Render
+   ========================================================= */
+function render(){
+  const q = QUESTIONS[idx];
+  const alreadyAnswered = results[idx] !== null;
+  answered = alreadyAnswered;
+
+  const isLast  = idx === QUESTIONS.length - 1;
+  const isFirst = idx === 0;
+  const nextLabel = isLast ? 'ফলাফল দেখুন' : 'পরবর্তী প্রশ্ন';
+
+  card.innerHTML = `
+    <div class="topbar">
+      <span class="badge"><span class="badge-ico">漢</span> কাঞ্জি — N5–N4 (৫০০)</span>
+      <span class="progress">প্রশ্ন ${bn(idx + 1)} / ${bn(QUESTIONS.length)}</span>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="segments" id="segments" aria-hidden="true">${segmentsHTML()}</div>
+      <div class="progress-meta">${metaHTML()}</div>
+    </div>
+
+    <div class="kanji">${esc(q.kanji)}</div>
+    <p class="question">এই কাঞ্জির অর্থ কী?</p>
+
+    <div class="options" id="options">
+      ${q.opts.map((opt, i) =>
+        `<button class="opt o${i % 4}" data-i="${i}">${esc(opt)}<span class="mark"></span></button>`
+      ).join('')}
+    </div>
+
+    <div class="reveal locked" id="reveal">
+      <div class="lock-chip"><span>🔒 উত্তর নির্বাচন করলে তথ্য দেখা যাবে</span></div>
+      <div class="detail">
+        <div class="row">
+          <span class="ico">漢</span><b>কাঞ্জি:</b><span class="val">${esc(q.kanji)}</span>
+        </div>
+        <div class="row">
+          <button class="spk" data-say="${esc(kanaOnly(q.reading))}" title="উচ্চারণ শুনুন">🔊</button>
+          <b>পড়া:</b><span class="val">${esc(q.reading)}</span>
+        </div>
+        <div class="row">
+          <button class="spk" data-say="${esc(kanaOnly(q.onyomi))}" title="উচ্চারণ শুনুন">🔊</button>
+          <b>অন্যোওমি:</b><span class="val">${esc(q.onyomi)}</span>
+        </div>
+        <div class="row">
+          <button class="spk" data-say="${esc(kanaOnly(q.kunyomi))}" title="উচ্চারণ শুনুন">🔊</button>
+          <b>কুন্যোওমি:</b><span class="val">${esc(q.kunyomi)}</span>
+        </div>
+        <div class="row">
+          <span class="ico check">✓</span><b>অর্থ:</b><span class="val">${esc(q.meaning)}</span>
+        </div>
+      </div>
+      <div class="example">
+        <div class="jp">${esc(q.exampleJp)}</div>
+        <div class="roma">${esc(q.exampleRoma)}</div>
+        <div class="bn">${esc(q.exampleBn)}</div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-arrow" id="prev" title="আগের প্রশ্ন" ${isFirst ? 'disabled' : ''} aria-label="আগের প্রশ্ন">◀</button>
+
+      <button class="next" id="next" ${alreadyAnswered ? '' : 'disabled'}>
+        <span>${nextLabel}</span>
+        ${isLast ? '' : `<span class="chip">${bn(idx + 2)}/${bn(QUESTIONS.length)}</span>`}
+        <span class="arrow">→</span>
+      </button>
+
+      <button class="nav-arrow" id="skipNext" title="উত্তর না দিয়ে পরের প্রশ্ন" ${isLast ? 'disabled' : ''} aria-label="পরের প্রশ্ন">▶</button>
+    </div>
+  `;
+
+  document.querySelectorAll('.opt').forEach(btn => {
+    btn.addEventListener('click', () => choose(+btn.dataset.i));
+  });
+  document.querySelectorAll('.spk').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      speak(btn.dataset.say);
+    });
+  });
+
+  document.getElementById('prev').addEventListener('click', goPrev);
+  document.getElementById('skipNext').addEventListener('click', goNext);
+  document.getElementById('next').addEventListener('click', nextQuestion);
+
+  document.getElementById('segments').addEventListener('click', e => {
+    const seg = e.target.closest('.seg');
+    if(seg) jumpTo(+seg.dataset.idx);
+  });
+
+  if(alreadyAnswered){
+    restoreAnsweredState(q);
+  }
+}
+
+function restoreAnsweredState(q){
+  const userIdx = selectedIdx[idx];
+  const correctIdx = q.correctIdx;
+  document.querySelectorAll('.opt').forEach((btn, bi) => {
+    btn.disabled = true;
+    const mark = btn.querySelector('.mark');
+    if(bi === correctIdx){
+      btn.classList.add('correct');
+      mark.textContent = '✓';
+    } else if(bi === userIdx){
+      btn.classList.add('wrong');
+      mark.textContent = '✕';
+    } else {
+      btn.classList.add('dim');
+    }
+  });
+  document.getElementById('reveal').classList.remove('locked');
+}
+
+/* =========================================================
+   Answer handling
+   ========================================================= */
+function choose(i){
+  if(answered) return;
+  answered = true;
+
+  const q = QUESTIONS[idx];
+  const correctIdx = q.correctIdx;
+  const isRight = i === correctIdx;
+  if(isRight) score++;
+
+  results[idx]     = isRight ? 'correct' : 'wrong';
+  selectedIdx[idx] = i;
+
+  document.querySelectorAll('.opt').forEach((btn, bi) => {
+    btn.disabled = true;
+    const mark = btn.querySelector('.mark');
+    if(bi === correctIdx){
+      btn.classList.add('correct');
+      mark.textContent = '✓';
+      mark.setAttribute('aria-label', 'সঠিক উত্তর');
+    } else if(bi === i){
+      btn.classList.add('wrong');
+      mark.textContent = '✕';
+      mark.setAttribute('aria-label', 'ভুল উত্তর');
+    } else {
+      btn.classList.add('dim');
+    }
+  });
+
+  document.getElementById('reveal').classList.remove('locked');
+  const nextBtn = document.getElementById('next');
+  nextBtn.disabled = false;
+  refreshProgress();
+  saveState();
+}
+
+/* =========================================================
+   Navigation
+   ========================================================= */
+function goPrev(){
+  if(idx > 0) jumpTo(idx - 1);
+}
+function goNext(){
+  if(idx < QUESTIONS.length - 1) jumpTo(idx + 1);
+}
+function jumpTo(i){
+  if(i < 0 || i >= QUESTIONS.length) return;
+  idx = i;
+  render();
+  saveState();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextQuestion(){
+  if(idx < QUESTIONS.length - 1){
+    jumpTo(idx + 1);
+  } else {
+    showResult();
+  }
+}
+
+/* =========================================================
+   Result
+   ========================================================= */
+function showResult(){
+  const total = QUESTIONS.length;
+  const { correctCnt, wrongCnt, attempted } = computeStats();
+  const pct = Math.round(score / total * 100);
+  const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '📚';
+
+  card.innerHTML = `
+    <div class="result">
+      <div class="emoji">${emoji}</div>
+      <h2>কুইজ শেষ হয়েছে!</h2>
+      <p class="score">আপনার স্কোর: <b>${bn(score)}</b> / ${bn(total)} &nbsp;(${bn(pct)}%)</p>
+      <p class="score" style="font-size:14px;margin-top:-16px">
+        <span class="pill ok">✓ ${bn(correctCnt)}</span>
+        <span class="pill no" style="margin-left:6px">✕ ${bn(wrongCnt)}</span>
+        <span class="pm" style="margin-left:10px">সম্পন্ন ${bn(attempted)} / ${bn(total)}</span>
+      </p>
+      <button class="next" id="restart">
+        <span>আবার শুরু করুন (নতুন এলোমেলো ক্রম)</span>
+        <span class="arrow">↻</span>
+      </button>
+    </div>
+  `;
+  document.getElementById('restart').addEventListener('click', () => {
+    clearState();
+    prepareQuestions();
+    render();
+    saveState();
+  });
+}
+
+/* Keyboard: 1-4 = answer, Enter = next, ← / → = prev / next */
+document.addEventListener('keydown', e => {
+  if(e.key >= '1' && e.key <= '4'){
+    const btn = document.querySelectorAll('.opt')[+e.key - 1];
+    if(btn && !btn.disabled) btn.click();
+  } else if(e.key === 'Enter'){
+    const n = document.getElementById('next');
+    if(n && !n.disabled) n.click();
+  } else if(e.key === 'ArrowLeft'){
+    const p = document.getElementById('prev');
+    if(p && !p.disabled) p.click();
+  } else if(e.key === 'ArrowRight'){
+    const s = document.getElementById('skipNext');
+    if(s && !s.disabled) s.click();
+  }
+});
+
+/* Boot: restore prior session if any, else fresh shuffle */
+if(!tryRestoreState()){
+  prepareQuestions();
+}
+render();
+</script>
+</body>
+</html>
